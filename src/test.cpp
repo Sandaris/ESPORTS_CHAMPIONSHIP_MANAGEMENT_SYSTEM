@@ -1,22 +1,42 @@
 #include <iostream>
 #include "File_exe.hpp"
+#include "EsportsAnalytics.hpp"
 
 using namespace CsvToolkit;
 using namespace std;
+using namespace EsportsAnalytics;
+
+#include "File_exe.hpp"          // Your CsvToolkit library/ The Task 4 module defined above
 
 int main() {
+   
+    bool running = true;
+        while (running) {
+            clearTerminal();
+            const char* menuOptions[] = {
+                "Scheduling & Progression",
+                "Registration & Player Management",
+                "Live Stream & Spectator Management",
+                "Performance & Analytics",
+                "Exit"
+            };
+            // Using displayMenu for user interaction
+            int choice = displayMenu("System Main Menu", menuOptions, 5);
 
-    const string filename = "tournament_stages.csv";
-
-    dataContainer2D tournamentData = getData(filename);
-
-    clearTerminal();
-
-    cout << "\nCSV Data from: " << filename << endl;
-    
-    displayTabulatedData(tournamentData);
-
-    deleteDataContainer2D(tournamentData);
+            switch (choice) 
+            {
+                case 1: printf("Scheduling & Progression"); break;
+                case 2: printf("Registration & Player Management"); break;
+                case 3: printf("Live Stream & Spectator Management"); break;
+                case 4: record_N_Analysis(); break;
+                case 5: running = false; break;
+                default: displaySystemMessage("Invalid choice, please try again.", 2); break;
+            }
+        }
+        clearTerminal();
+        std::cout << "\nExiting ESPORTS CHAMPIONSHIP MANAGEMENT SYSTEM, See you...\n" << std::endl;
 
     return 0;
+
+
 }
