@@ -1,0 +1,9 @@
+player_id,player_name,university_name,email,country_of_origin,current_ranking_points,initial_registration_date
+PLYR0001,Ahmad "IronClad" Ibrahim,Asia Pacific University,ahmad.i@apu.edu.my,Malaysia,1850,2025-01-10
+PLYR0002,Chen "SwiftFox" Wei,Tsinghua University,chen.w@tsinghua.cn,China,1920,2025-01-08
+PLYR0003,Siti "Nightshade" Aminah,National University of Singapore,siti.a@nus.edu.sg,Singapore,1780,2025-01-12
+PLYR0004,Kenji "Ronin" Tanaka,University of Tokyo,kenji.t@u-tokyo.ac.jp,Japan,1880,2025-01-09
+PLYR0005,Priya "Phoenix" Sharma,Indian Institute of Technology Bombay,priya.s@iitb.ac.in,India,1750,2025-01-11
+PLYR0006,Lee "Zephyr" Min-jun,Seoul National University,lee.mj@snu.ac.kr,South Korea,1950,2025-01-15
+PLYR0007,Ananda "Garuda" Putra,Bandung Institute of Technology,ananda.p@itb.ac.id,Indonesia,1700,2025-01-18
+PLYR0008,Mei "Viper" Lin,Fudan University,mei.lin@fudan.edu.cn,China,1820,2025-01-13

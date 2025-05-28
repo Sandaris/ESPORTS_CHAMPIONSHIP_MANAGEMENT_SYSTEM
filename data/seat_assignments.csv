@@ -1,0 +1,6 @@
+assignment_id,spectator_id,seat_number,section_name,assigned_datetime,notes
+SEATASGN001,SPEC0001,VIP-A1,VIP Lounge,2025-02-28 10:00:00,Front row view
+SEATASGN002,SPEC0002,InfluencerPod-1,Streamer & Influencer Zone,2025-02-28 10:00:00,Requires dedicated power
+SEATASGN003,SPEC0004,CrewArea-S1,Production Backstage,2025-02-28 09:00:00,Technical access pass
+SEATASGN004,SPEC0005,VIP-A2,VIP Lounge,2025-05-29 11:00:00,Adjacent to SPEC0001 if possible
+SEATASGN005,SPEC0003,GA-C-101,General Audience Sector C,2025-03-01 10:15:00,First-come first-serve within section

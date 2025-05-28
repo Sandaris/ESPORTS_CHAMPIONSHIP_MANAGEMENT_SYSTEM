@@ -1,0 +1,8 @@
+stage_id,tournament_id,stage_name,stage_order,stage_format,number_of_expected_matches
+STAGE01,APUEC2025,Qualifiers - Round 1,1,Single Elimination,64
+STAGE02,APUEC2025,Qualifiers - Round 2,2,Single Elimination,32
+STAGE03,APUEC2025,Group Stage - Group A,3,Round Robin,12
+STAGE04,APUEC2025,Group Stage - Group B,3,Round Robin,12
+STAGE05,APUEC2025,Quarterfinals,4,BestOf3,4
+STAGE06,APUEC2025,Semifinals,5,BestOf3,2
+STAGE07,APUEC2025,Grand Finals,6,BestOf5,1
