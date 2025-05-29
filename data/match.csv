@@ -1,0 +1,5 @@
+match_id,scheduled_date,scheduled_time,match_round_number,actual_start_time,actual_end_time,team1_id,team2_id,winner_team_id,team1_score,team2_score,match_status,match_level
+MATCH001,2025-05-25,10:00:00,1,10:05:00,11:35:00,TEAM01,TEAM02,TEAM01,2,1,Completed,"Upper Bracket Round 1"
+MATCH002,2025-05-25,12:00:00,1,12:10:00,13:50:00,TEAM03,TEAM04,TEAM04,1,2,Completed,"Upper Bracket Round 1"
+MATCH003,2025-05-30,14:00:00,2,,,TEAM01,TEAM04,,,Scheduled,"Upper Bracket Semifinal"
+MATCH004,2025-05-30,10:00:00,1,,,TEAM02,TEAM05,,,Scheduled,"Lower Bracket Round 1"

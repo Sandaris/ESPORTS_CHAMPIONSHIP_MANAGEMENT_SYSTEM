@@ -1,0 +1,5 @@
+stream_slot_id,stream_platform_channel,streamer_name,match_id_being_streamed,scheduled_start_time,scheduled_end_time,dedicated_viewing_area_id,technical_requirements
+STRM001,Twitch - APUEDotaOfficial,APUEC Main Cast,MATCH001,2025-05-25 09:50:00,2025-05-25 11:45:00,MainStreamPod_A,"Primary Game Feed, Caster Audio"
+STRM002,YouTube - DotaGuruCasts,DotaGuru,MATCH002,2025-05-25 11:50:00,2025-05-25 14:00:00,CommunityStream_1,"Clean Feed Option, Ethernet"
+STRM003,Twitch - APUEDotaOfficial,APUEC Main Cast,MATCH003,2025-05-30 13:50:00,2025-05-30 16:00:00,MainStreamPod_A,"Primary Game Feed, Caster Audio"
+STRM004,Facebook - CampusGamersLive,APU Gaming Club,MATCH004,2025-05-30 09:50:00,2025-05-30 12:00:00,CommunityStream_2,Local Network Access
