@@ -1,6 +1,0 @@
-ticket_id,seat_type,ticket_type
-TKT0001,Grandstand,StandardDay1
-TKT0002,VIP_Box,VIP_FullEvent
-TKT0003,Floor_Access,StandardDay2
-TKT0004,Grandstand,EarlyBird_FullEvent
-TKT0005,VIP_Lounge_Access,Premium_SingleMatch_SF1
