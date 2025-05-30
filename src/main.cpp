@@ -1,10 +1,12 @@
 #include <iostream>
 #include "File_exe.hpp"
 #include "EsportsAnalytics.hpp"
+#include "EsportsScheduler.hpp" 
 
 using namespace CsvToolkit;
 using namespace std;
 using namespace EsportsAnalytics;
+using namespace EsportsScheduler;
 
 #include "File_exe.hpp"          // Your CsvToolkit library/ The Task 4 module defined above
 
@@ -25,7 +27,7 @@ int main() {
 
             switch (choice) 
             {
-                case 1: printf("Scheduling & Progression"); break;
+                case 1: manage_scheduling_and_progression(); break;
                 case 2: printf("Registration & Player Management"); break;
                 case 3: printf("Live Stream & Spectator Management"); break;
                 case 4: record_N_Analysis(); break;

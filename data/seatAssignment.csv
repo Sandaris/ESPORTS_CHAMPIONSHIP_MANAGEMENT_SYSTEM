@@ -1,0 +1,4 @@
+assignment_id,spectator_id,seat_number,section_name,assigned_datetime,notes
+SEAT001,SPEC001,VIP-A10,VIP Balcony,2025-05-24 10:00:00,Overlooks main stage
+SEAT002,SPEC003,INFLU-S2,Influencer Hotspot,2025-05-24 10:05:00,Power outlet requested
+SEAT003,SPEC004,VIP-B05,VIP Skybox,2025-05-29 09:00:00,Reserved for Day 2 VIP

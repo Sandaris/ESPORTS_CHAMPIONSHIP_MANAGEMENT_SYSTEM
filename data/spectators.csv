@@ -1,7 +1,6 @@
-spectator_id,spectator_name,spectator_type,email_contact,organization,arrival_timestamp
-SPEC0001,Michael Lim,VIP,michael.lim@example.com,APU Board Member,2025-03-01 09:30:00
-SPEC0002,GamingGuru47,Influencer,gg47@youtubers.com,YouTube Creators,2025-03-01 09:45:00
-SPEC0003,Sarah Tan,GeneralAdmission,,,2025-03-01 10:15:00
-SPEC0004,David Lee,StreamerCrew,crew.david@twitchstream.tv,APUeSportsTV Crew,2025-03-01 08:00:00
-SPEC0005,Jane Doe,VIP,jane.doe@example.com,SponsorCorp CEO,2025-05-30 12:30:00
-SPEC0006,eSportsFanatic22,GeneralAdmission,,,2025-05-30 12:45:00
+spectator_id,spectator_name,spectator_type,email_contact,organization,register_timestamp,check_in
+SPEC001,Alice Wonderland,VIP,alice.w@example.com,Wonderland Inc.,2025-05-25 09:00:00,1
+SPEC002,Bob TheBuilder,GeneralAdmission,bob.b@example.com,,2025-05-25 09:45:00,1
+SPEC003,Charlie Brown,Influencer,charlie.b@social.com,Peanuts Gang,2025-05-25 09:15:00,0
+SPEC004,Diana Prince,VIP,diana.p@themyscira.com,Justice League,2025-05-30 13:00:00,0
+SPEC005,Edward Scissorhands,GeneralAdmission,edward.s@example.com,,2025-05-25 10:30:00,1
