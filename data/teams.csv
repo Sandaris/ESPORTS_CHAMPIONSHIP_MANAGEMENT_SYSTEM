@@ -1,6 +1,17 @@
-team_id,team_name,university_name,players,email,checkin_date,checkin_time,ranking_points,status
-TEAM01,DireWolves,Asia Pacific University,"MiracleMaker;ShadowFiendPro;EarthShakerGod;InvokerMaster;CrystalMaidenSupport",direwolves@apu.edu.my,2025-05-20,09:00:00,1850,CheckedIn
-TEAM02,RadiantKnights,Tsinghua University,"CarryKing;MidLaneMenace;OfflaneOracle;SupportSorcerer;HardSupportHero",radiantknights@tsinghua.cn,2025-05-20,09:30:00,1920,CheckedIn
-TEAM03,VoidGuardians,National University of Singapore,"PhantomAssassinAce;StormSpiritStar;TidehunterTitan;LionLegend;DazzleDoctor",voidguardians@nus.edu.sg,2025-05-20,10:00:00,1780,CheckedIn
-TEAM04,StormRaiders,University of Tokyo,"JuggernautChamp;QueenOfPainQueen;AxeAnnihilator;SkywrathSage;WitchDoctorWizard",stormraiders@u-tokyo.ac.jp,2025-05-21,11:00:00,1880,CheckedIn
-TEAM05,SerpentSquad,Indian Institute of Technology Bombay,"NagaSirenPro;TemplarAssassinX;CentaurChief;RubickRuler;OracleObserver",serpents@iitb.ac.in,2025-05-21,11:30:00,1750,Pending
+TeamID;TeamName;University;Country;TeamType;RegistereDate;RegisterTime;RankingPoint;TeamStatus;CheckedInTime;CheckInStatus
+T001;RadiantRush;APU;Malaysia;EarlyBird;2025-06-01;08:30;870;Registered;10:01;CheckedIn
+T002;DireDominators;NTU;Singapore;EarlyBird;2025-06-01;08:35;915;Registered;10:07;CheckedIn
+T003;CreepingChaos;HKUST;Hong Kong;EarlyBird;2025-06-01;08:40;820;Registered;;Pending
+T004;InvokerSquad;ITB;Indonesia;EarlyBird;2025-06-01;08:45;860;Registered;;Pending
+T005;RoshRushers;UPM;Malaysia;EarlyBird;2025-06-01;08:50;895;Registered;10:12;CheckedIn
+T006;TangoTacticians;USYD;Australia;EarlyBird;2025-06-01;08:52;880;Registered;;Pending
+T007;AghanimAvengers;UM;Malaysia;EarlyBird;2025-06-01;08:55;845;Registered;;Pending
+T008;WardingWizards;NUS;Singapore;EarlyBird;2025-06-01;08:59;875;Registered;10:20;CheckedIn
+T009;CrypticClicks;Chula;Thailand;EarlyBird;2025-06-01;09:01;905;Registered;;Pending
+T010;BlinkStrike;CUHK;Hong Kong;EarlyBird;2025-06-01;09:05;890;Registered;;Pending
+T011;DarkSeers;UPSI;Malaysia;EarlyBird;2025-06-01;09:07;860;Registered;;Pending
+T012;MeepoMayhem;UNSW;Australia;EarlyBird;2025-06-01;09:10;900;Registered;;Pending
+T013;LastHope;UMT;Malaysia;Standard;2025-06-01;09:20;870;WaitingList;;
+T014;PowerCogs;AIT;Thailand;Standard;2025-06-01;09:25;865;WaitingList;;
+T015;UltimateVoid;UKM;Malaysia;Standard;2025-06-01;09:30;860;Withdraw;;
+T016;InvitedLegends;MIT;USA;Wildcard;2025-06-01;09:00;950;Registered;;Pending

@@ -1,9 +1,97 @@
-player_id,player_name,university_name,email,country_of_origin,current_ranking_points,initial_registration_date
-PLYR0001,Ahmad "IronClad" Ibrahim,Asia Pacific University,ahmad.i@apu.edu.my,Malaysia,1850,2025-01-10
-PLYR0002,Chen "SwiftFox" Wei,Tsinghua University,chen.w@tsinghua.cn,China,1920,2025-01-08
-PLYR0003,Siti "Nightshade" Aminah,National University of Singapore,siti.a@nus.edu.sg,Singapore,1780,2025-01-12
-PLYR0004,Kenji "Ronin" Tanaka,University of Tokyo,kenji.t@u-tokyo.ac.jp,Japan,1880,2025-01-09
-PLYR0005,Priya "Phoenix" Sharma,Indian Institute of Technology Bombay,priya.s@iitb.ac.in,India,1750,2025-01-11
-PLYR0006,Lee "Zephyr" Min-jun,Seoul National University,lee.mj@snu.ac.kr,South Korea,1950,2025-01-15
-PLYR0007,Ananda "Garuda" Putra,Bandung Institute of Technology,ananda.p@itb.ac.id,Indonesia,1700,2025-01-18
-PLYR0008,Mei "Viper" Lin,Fudan University,mei.lin@fudan.edu.cn,China,1820,2025-01-13
+PlayerID;PlayerName;TeamID;Role;University;Country;InGameName;Email;RankingPoint;PlayerStatus;EligibilityStatus;CheckedInTime
+P001;Alice;T001;Main;APU;Malaysia;Alice01;alice@mail.com;850;CheckedIn;Eligible;2025-06-14 10:00
+P002;Bob;T001;Main;APU;Malaysia;Bobster;bob@mail.com;820;CheckedIn;Eligible;2025-06-14 10:01
+P003;Cathy;T001;Main;APU;Malaysia;CathyZ;cathy@mail.com;815;Pending;Eligible;
+P004;David;T001;Main;APU;Malaysia;D4v1d;david@mail.com;800;Pending;Eligible;
+P005;Eddy;T001;Main;APU;Malaysia;EddyG;eddy@mail.com;785;Pending;Eligible;
+P006;Fred;T001;Sub;APU;Malaysia;FredF;fred@mail.com;780;Pending;Eligible;
+P007;George;T002;Main;NTU;Singapore;GeoGod;george@mail.com;900;CheckedIn;Eligible;2025-06-14 10:07
+P008;Henry;T002;Main;NTU;Singapore;H4nry;henry@mail.com;880;CheckedIn;Eligible;2025-06-14 10:07
+P009;Ivy;T002;Main;NTU;Singapore;IvySharp;ivy@mail.com;860;Pending;Eligible;
+P010;Jake;T002;Main;NTU;Singapore;JkNuke;jake@mail.com;855;Pending;Eligible;
+P011;Karl;T002;Main;NTU;Singapore;KarlKillz;karl@mail.com;850;Pending;Eligible;
+P012;Laura;T002;Sub;NTU;Singapore;LaurieX;laura@mail.com;840;Pending;Eligible;
+P013;Mira;T003;Main;HKUST;Hong Kong;MiraWind;mira@mail.com;820;Pending;Eligible;
+P014;Noah;T003;Main;HKUST;Hong Kong;NoahRay;noah@mail.com;815;Pending;Eligible;
+P015;Ollie;T003;Main;HKUST;Hong Kong;OllieDawn;ollie@mail.com;810;Pending;Eligible;
+P016;Pia;T003;Main;HKUST;Hong Kong;PiaStorm;pia@mail.com;800;Pending;Eligible;
+P017;Quinn;T003;Main;HKUST;Hong Kong;QuinnIce;quinn@mail.com;790;Pending;Eligible;
+P018;Rina;T003;Sub;HKUST;Hong Kong;RinaNova;rina@mail.com;780;Pending;Eligible;
+P019;Sam;T004;Main;ITB;Indonesia;SamVoid;sam@mail.com;860;Pending;Eligible;
+P020;Tina;T004;Main;ITB;Indonesia;TinaBlink;tina@mail.com;850;Pending;Eligible;
+P021;Umar;T004;Main;ITB;Indonesia;UmarX;umar@mail.com;840;Pending;Eligible;
+P022;Vera;T004;Main;ITB;Indonesia;VeraDash;vera@mail.com;830;Pending;Eligible;
+P023;Will;T004;Main;ITB;Indonesia;WillZap;will@mail.com;825;Pending;Eligible;
+P024;Xan;T004;Sub;ITB;Indonesia;XanFlame;xan@mail.com;810;Pending;Eligible;
+P025;Yuna;T005;Main;UPM;Malaysia;YunaIce;yuna@mail.com;870;CheckedIn;Eligible;2025-06-14 10:12
+P026;Zed;T005;Main;UPM;Malaysia;ZedSmash;zed@mail.com;860;Pending;Eligible;
+P027;Alex;T005;Main;UPM;Malaysia;AlexPunch;alex@mail.com;850;Pending;Eligible;
+P028;Bella;T005;Main;UPM;Malaysia;BellaFury;bella@mail.com;840;Pending;Eligible;
+P029;Chris;T005;Main;UPM;Malaysia;ChrisWave;chris@mail.com;830;Pending;Eligible;
+P030;Dina;T005;Sub;UPM;Malaysia;DinaBlitz;dina@mail.com;820;Pending;Eligible;
+P031;Elio;T006;Main;USYD;Australia;ElioStar;elio@mail.com;880;Pending;Eligible;
+P032;Faye;T006;Main;USYD;Australia;FayeMancer;faye@mail.com;875;Pending;Eligible;
+P033;Gavin;T006;Main;USYD;Australia;GavinRush;gavin@mail.com;870;Pending;Eligible;
+P034;Hazel;T006;Main;USYD;Australia;HazelBlink;hazel@mail.com;860;Pending;Eligible;
+P035;Iris;T006;Main;USYD;Australia;IrisPath;iris@mail.com;855;Pending;Eligible;
+P036;Jude;T006;Sub;USYD;Australia;JudeNova;jude@mail.com;850;Pending;Eligible;
+P037;Kai;T007;Main;UM;Malaysia;KaiDark;kai@mail.com;845;Pending;Eligible;
+P038;Lily;T007;Main;UM;Malaysia;LilyShock;lily@mail.com;840;Pending;Eligible;
+P039;Moe;T007;Main;UM;Malaysia;MoeStatic;moe@mail.com;835;Pending;Eligible;
+P040;Nina;T007;Main;UM;Malaysia;NinaCore;nina@mail.com;830;Pending;Eligible;
+P041;Omar;T007;Main;UM;Malaysia;OmarStrike;omar@mail.com;825;Pending;Eligible;
+P042;Perry;T007;Sub;UM;Malaysia;PerryZap;perry@mail.com;820;Pending;Eligible;
+P043;Qin;T008;Main;NUS;Singapore;QinNova;qin@mail.com;875;CheckedIn;Eligible;2025-06-14 10:20
+P044;Rae;T008;Main;NUS;Singapore;RaeLight;rae@mail.com;870;Pending;Eligible;
+P045;Seth;T008;Main;NUS;Singapore;SethBurn;seth@mail.com;860;Pending;Eligible;
+P046;Tori;T008;Main;NUS;Singapore;ToriZap;tori@mail.com;850;Pending;Eligible;
+P047;Uma;T008;Main;NUS;Singapore;UmaDash;uma@mail.com;845;Pending;Eligible;
+P048;Vick;T008;Sub;NUS;Singapore;VickBolt;vick@mail.com;840;Pending;Eligible;
+P049;Wyn;T009;Main;Chula;Thailand;WynFlare;wyn@mail.com;905;Pending;Eligible;
+P050;Xen;T009;Main;Chula;Thailand;XenBash;xen@mail.com;900;Pending;Eligible;
+P051;Yee;T009;Main;Chula;Thailand;YeeSmash;yee@mail.com;895;Pending;Eligible;
+P052;Zoe;T009;Main;Chula;Thailand;ZoeNova;zoe@mail.com;890;Pending;Eligible;
+P053;Andy;T009;Main;Chula;Thailand;AndyBlink;andy@mail.com;880;Pending;Eligible;
+P054;Bea;T009;Sub;Chula;Thailand;BeaCore;bea@mail.com;870;Pending;Eligible;
+P055;Carl;T010;Main;CUHK;Hong Kong;CarlVolt;carl@mail.com;890;Pending;Eligible;
+P056;Dana;T010;Main;CUHK;Hong Kong;DanaShock;dana@mail.com;880;Pending;Eligible;
+P057;Erin;T010;Main;CUHK;Hong Kong;ErinRush;erin@mail.com;870;Pending;Eligible;
+P058;Felix;T010;Main;CUHK;Hong Kong;FelixDash;felix@mail.com;865;Pending;Eligible;
+P059;Gina;T010;Main;CUHK;Hong Kong;GinaFrost;gina@mail.com;860;Pending;Eligible;
+P060;Hank;T010;Sub;CUHK;Hong Kong;HankZap;hank@mail.com;850;Pending;Eligible;
+P061;Iggy;T011;Main;UPSI;Malaysia;IggyZap;iggy@mail.com;860;Pending;Eligible;
+P062;Jana;T011;Main;UPSI;Malaysia;JanaNova;jana@mail.com;855;Pending;Eligible;
+P063;Kean;T011;Main;UPSI;Malaysia;KeanBlade;kean@mail.com;850;Pending;Eligible;
+P064;Lara;T011;Main;UPSI;Malaysia;LaraDash;lara@mail.com;845;CheckedIn;Eligible;2025-06-14 10:30
+P065;Mike;T011;Main;UPSI;Malaysia;MikeStorm;mike@mail.com;840;CheckedIn;Eligible;2025-06-14 10:32
+P066;Nora;T011;Sub;UPSI;Malaysia;NoraClutch;nora@mail.com;835;Pending;Eligible;
+P067;Omar;T012;Main;UNSW;Australia;OmarCrit;omar@mail.com;900;Pending;Eligible;
+P068;Pia;T012;Main;UNSW;Australia;PiaVoid;pia@mail.com;895;Pending;Eligible;
+P069;Qin;T012;Main;UNSW;Australia;QinBlink;qin@mail.com;890;CheckedIn;Eligible;2025-06-14 10:35
+P070;Ravi;T012;Main;UNSW;Australia;RaviBolt;ravi@mail.com;885;Pending;Eligible;
+P071;Suki;T012;Main;UNSW;Australia;SukiFlare;suki@mail.com;880;CheckedIn;Eligible;2025-06-14 10:37
+P072;Tina;T012;Sub;UNSW;Australia;TinaFrost;tina@mail.com;875;Pending;Eligible;
+P073;Zane;T013;Main;UMT;Malaysia;ZaneX;zane@mail.com;765;Pending;Standby;
+P074;Nina;T013;Main;UMT;Malaysia;NinaBlade;nina@mail.com;770;Pending;Standby;
+P075;Oscar;T013;Main;UMT;Malaysia;OscarRush;oscar@mail.com;760;Pending;Standby;
+P076;Paul;T013;Main;UMT;Malaysia;PaulVortex;paul@mail.com;750;Pending;Standby;
+P077;Quincy;T013;Main;UMT;Malaysia;QuinnShot;quincy@mail.com;745;Pending;Standby;
+P078;Sasha;T013;Sub;UMT;Malaysia;S4sh4;sasha@mail.com;740;Pending;Standby;
+P079;Umair;T014;Main;AIT;Thailand;UmairHex;umair@mail.com;865;Pending;Standby;
+P080;Vivi;T014;Main;AIT;Thailand;ViviZap;vivi@mail.com;860;Pending;Standby;
+P081;Waleed;T014;Main;AIT;Thailand;WaleedNova;waleed@mail.com;855;Pending;Standby;
+P082;Xena;T014;Main;AIT;Thailand;XenaVoid;xena@mail.com;850;Pending;Standby;
+P083;Yani;T014;Main;AIT;Thailand;YaniBurn;yani@mail.com;845;Pending;Standby;
+P084;Zack;T014;Sub;AIT;Thailand;ZackShock;zack@mail.com;840;Pending;Standby;
+P085;Tim;T015;Main;UKM;Malaysia;TimberGod;tim@mail.com;780;Pending;Withdrawn;
+P086;Una;T015;Main;UKM;Malaysia;UnicornFury;una@mail.com;770;Pending;Withdrawn;
+P087;Vic;T015;Main;UKM;Malaysia;VicSavage;vic@mail.com;760;Pending;Withdrawn;
+P088;Wes;T015;Main;UKM;Malaysia;WesBurner;wes@mail.com;755;Pending;Withdrawn;
+P089;Xia;T015;Main;UKM;Malaysia;XiaEdge;xia@mail.com;745;Pending;Withdrawn;
+P090;Yuki;T015;Sub;UKM;Malaysia;YukiZen;yuki@mail.com;740;Pending;Withdrawn;
+P091;Leo;T016;Main;MIT;USA;LeoClutch;leo@mail.com;920;Pending;Eligible;
+P092;Maya;T016;Main;MIT;USA;MayaHex;maya@mail.com;910;Pending;Eligible;
+P093;Nash;T016;Main;MIT;USA;NashDark;nash@mail.com;900;Pending;Eligible;
+P094;Olive;T016;Main;MIT;USA;OliveAura;olive@mail.com;890;Pending;Eligible;
+P095;Pierce;T016;Main;MIT;USA;PierceRTS;pierce@mail.com;880;Pending;Eligible;
+P096;Queenie;T016;Sub;MIT;USA;QueenRTS;queenie@mail.com;875;Pending;Eligible;
