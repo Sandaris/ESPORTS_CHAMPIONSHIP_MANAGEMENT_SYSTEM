@@ -6,5 +6,4 @@ STAT00004,MATCH0002,PLYR0005,8,18,3,150,DamageDealt,6500,HealingDone,100,Struggl
 STAT00005,MATCH0003,PLYR0004,18,10,6,380,KDA_Ratio,2.4,FirstBloods,1,Consistent map control.
 STAT00006,MATCH0003,PLYR0007,12,15,9,300,KDA_Ratio,1.4,FirstBloods,0,Strong late game attempt.
 STAT00007,MATCH0004,PLYR0001,10,14,5,290,UltimateUsage,Effective,SpikePlants,2,Close match, narrowly lost.
-STAT00008,MATCH0004,PLYR0002,16,9,8,350,UltimateUsage,Strategic,SpikePlants,3,Key clutch in final round.,MATCH0007,PLYR0001,-1,-1,-1,-1,1,1,1,,
-,MATCH0007,PLYR0002,-1,-1,-1,-1,,,,,
+STAT00008,MATCH0004,PLYR0002,16,9,8,350,UltimateUsage,Strategic,SpikePlants,3,Key clutch in final round.
