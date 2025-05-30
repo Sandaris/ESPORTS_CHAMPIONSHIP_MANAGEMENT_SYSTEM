@@ -12,8 +12,8 @@ namespace EsportsScheduler {
 
     // --- Constants for CSV Files ---
     const std::string PLAYERS_CSV_FILE = "player.csv";
-    const std::string STAGES_CSV_FILE = "tournament_stages.csv";
-    const std::string MATCHES_CSV_FILE = "matches.csv";
+    const std::string STAGES_CSV_FILE = "tournament_bracket.csv";
+    const std::string MATCHES_CSV_FILE = "match.csv";
 
     // --- Data Structures for Task 1 ---
 
