@@ -1,6 +1,3 @@
 team_id,position,bracket
-TEAM01,UB-R1-M1,upper_bracket
-TEAM02,UB-R1-M1,upper_bracket
-TEAM03,UB-R1-M2,upper_bracket
-TEAM04,UB-R1-M2,upper_bracket
-TEAM05,LB-R1-M1,lower_bracket
+T010,UB-R1-M1-S1,upper_bracket
+T004,UB-R1-M1-S2,upper_bracket

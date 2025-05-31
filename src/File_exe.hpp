@@ -314,8 +314,8 @@ dataContainer2D getData(const std::string& filenameWithExtension) {
         }
 
         if (actualDataTokensInRow != M_expectedFields) {
-            std::cerr << "Warning: Row " << (rowCount + 1) << " in " << filenameWithExtension << " has " << actualDataTokensInRow
-                      << " fields, expected " << M_expectedFields << ". Padding with empty strings." << std::endl;
+            // std::cerr << "Warning: Row " << (rowCount + 1) << " in " << filenameWithExtension << " has " << actualDataTokensInRow
+            //           << " fields, expected " << M_expectedFields << ". Padding with empty strings." << std::endl;
             for(int k=actualDataTokensInRow; k < M_expectedFields; ++k) {
                 if (container.data[rowCount][k] == nullptr) { // If parseCsvRow didn't fill it
                     container.data[rowCount][k] = new char[1];
@@ -1140,6 +1140,283 @@ int deleteBySecondKey(const std::string& filenameWithExtension, const char* prim
     deleteDataContainer2D(modifiedData); return writeResult;
 }
 
+dataContainer2D SortByFieldName(dataContainer2D data, const char* fieldName, bool ascending) {
+    using namespace CsvToolkit;
+
+    dataContainer2D sorted;
+    sorted.error = 1;
+
+    if (data.error || !data.fields || data.x == 0 || data.y == 0) {
+        std::cerr << "Error: Invalid data container.\n";
+        return sorted;
+    }
+
+    // Find column index
+    int fieldIndex = -1;
+    for (int i = 0; i < data.x; ++i) {
+        if (strcmp(data.fields[i], fieldName) == 0) {
+            fieldIndex = i;
+            break;
+        }
+    }
+    if (fieldIndex == -1) {
+        std::cerr << "Error: Field '" << fieldName << "' not found.\n";
+        return sorted;
+    }
+
+    // Copy field names
+    sorted.x = data.x;
+    sorted.y = data.y;
+    sorted.fields = new char*[sorted.x];
+    for (int i = 0; i < sorted.x; ++i)
+        sorted.fields[i] = duplicateString(data.fields[i]);
+
+    // Copy data
+    sorted.data = new char**[sorted.y];
+    for (int i = 0; i < sorted.y; ++i) {
+        sorted.data[i] = new char*[sorted.x];
+        for (int j = 0; j < sorted.x; ++j) {
+            sorted.data[i][j] = duplicateString(data.data[i][j]);
+        }
+    }
+
+    // Bubble sort (lexical)
+    for (int i = 0; i < sorted.y - 1; ++i) {
+        for (int j = 0; j < sorted.y - i - 1; ++j) {
+            const char* a = sorted.data[j][fieldIndex];
+            const char* b = sorted.data[j + 1][fieldIndex];
+
+            bool condition = ascending ? (strcmp(a, b) > 0) : (strcmp(a, b) < 0);
+            if (condition) {
+                char** temp = sorted.data[j];
+                sorted.data[j] = sorted.data[j + 1];
+                sorted.data[j + 1] = temp;
+            }
+        }
+    }
+
+    sorted.error = 0;
+    return sorted;
+}
+
+dataContainer2D sortByTwoFields(dataContainer2D data,const char* primaryField,const char* secondaryField,bool ascending) {
+    using namespace CsvToolkit;
+
+    dataContainer2D sorted;
+    sorted.error = 1;
+
+    if (data.error || !data.fields || data.x == 0 || data.y == 0) {
+        std::cerr << "Error: Invalid data container.\n";
+        return sorted;
+    }
+
+    // Find primary and secondary column indices
+    int primaryIdx = -1, secondaryIdx = -1;
+    for (int i = 0; i < data.x; ++i) {
+        if (strcmp(data.fields[i], primaryField) == 0) primaryIdx = i;
+        if (strcmp(data.fields[i], secondaryField) == 0) secondaryIdx = i;
+    }
+
+    if (primaryIdx == -1 || secondaryIdx == -1) {
+        std::cerr << "Error: One or both fields not found.\n";
+        return sorted;
+    }
+
+    // Copy fields
+    sorted.x = data.x;
+    sorted.y = data.y;
+    sorted.fields = new char*[sorted.x];
+    for (int i = 0; i < sorted.x; ++i)
+        sorted.fields[i] = duplicateString(data.fields[i]);
+
+    // Copy data
+    sorted.data = new char**[sorted.y];
+    for (int i = 0; i < sorted.y; ++i) {
+        sorted.data[i] = new char*[sorted.x];
+        for (int j = 0; j < sorted.x; ++j)
+            sorted.data[i][j] = duplicateString(data.data[i][j]);
+    }
+
+    // Bubble sort with primary + secondary criteria
+    for (int i = 0; i < sorted.y - 1; ++i) {
+        for (int j = 0; j < sorted.y - i - 1; ++j) {
+            const char* a1 = sorted.data[j][primaryIdx];
+            const char* b1 = sorted.data[j + 1][primaryIdx];
+            const char* a2 = sorted.data[j][secondaryIdx];
+            const char* b2 = sorted.data[j + 1][secondaryIdx];
+
+            bool swapNeeded = false;
+            int cmpPrimary = strcmp(a1, b1);
+            int cmpSecondary = strcmp(a2, b2);
+
+            if (ascending) {
+                if (cmpPrimary > 0) swapNeeded = true;
+                else if (cmpPrimary == 0 && cmpSecondary > 0) swapNeeded = true;
+            } else {
+                if (cmpPrimary < 0) swapNeeded = true;
+                else if (cmpPrimary == 0 && cmpSecondary < 0) swapNeeded = true;
+            }
+
+            if (swapNeeded) {
+                char** temp = sorted.data[j];
+                sorted.data[j] = sorted.data[j + 1];
+                sorted.data[j + 1] = temp;
+            }
+        }
+    }
+
+    sorted.error = 0;
+    return sorted;
+}
+
+int updateFieldByKey(const std::string& filename, const char* key, const char* fieldName, const char* newValue) {
+    dataContainer2D data = getData(filename);
+    if (data.error || data.y == 0) {
+        std::cerr << "Error loading file or no records.\n";
+        return 1;
+    }
+
+    int keyIndex = 0; // assumes the key is the first column
+    int fieldIndex = -1;
+
+    // Find the index of the field to update
+    for (int i = 0; i < data.x; ++i) {
+        if (data.fields[i] && strcmp(data.fields[i], fieldName) == 0) {
+            fieldIndex = i;
+            break;
+        }
+    }
+
+    if (fieldIndex == -1) {
+        std::cerr << "Field '" << fieldName << "' not found.\n";
+        deleteDataContainer2D(data);
+        return 2;
+    }
+
+    bool found = false;
+    for (int i = 0; i < data.y; ++i) {
+        if (data.data[i][keyIndex] && strcmp(data.data[i][keyIndex], key) == 0) {
+            delete[] data.data[i][fieldIndex]; // delete old value
+            data.data[i][fieldIndex] = duplicateString(newValue);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        std::cerr << "Key '" << key << "' not found.\n";
+        deleteDataContainer2D(data);
+        return 3;
+    }
+
+    int writeResult = writeData(filename, data);
+    deleteDataContainer2D(data);
+    return writeResult;
+}
+int writeRow(const std::string& filenameWithExtension, int numCols, char** rowData) {
+        if (!rowData || numCols <= 0) {
+            std::cerr << "Error: Invalid arguments for writeRow.\n";
+            return 1;
+        }
+
+        std::ofstream outFile;
+        if (!openCsvFileForWrite(filenameWithExtension, outFile, std::ios::out | std::ios::app)) {
+            return 1;
+        }
+
+        for (int i = 0; i < numCols; ++i) {
+            if (rowData[i]) outFile << rowData[i];
+            if (i < numCols - 1) outFile << ",";
+        }
+        outFile << "\n";
+        outFile.close();
+        return 0;
+    }
+
+dataContainer2D Search1FieldValue(const std::string& filenameWithExtension, const char* fieldName, const char* dataToMatch) {
+    dataContainer2D fullData = getData(filenameWithExtension);
+    dataContainer2D result;
+    result.error = 1;
+
+    if (fullData.error || !fieldName || !dataToMatch) {
+        std::cerr << "Search1FieldValue: Error loading data or invalid arguments.\n";
+        deleteDataContainer2D(fullData);
+        return result;
+    }
+
+    // Find the index of the requested field
+    int fieldIndex = -1;
+    for (int i = 0; i < fullData.x; ++i) {
+        if (strcmp(fullData.fields[i], fieldName) == 0) {
+            fieldIndex = i;
+            break;
+        }
+    }
+
+    if (fieldIndex == -1) {
+        std::cerr << "Search1FieldValue: Field '" << fieldName << "' not found.\n";
+        deleteDataContainer2D(fullData);
+        return result;
+    }
+
+    // Prepare result container
+    result.x = fullData.x;
+    result.fields = new char*[result.x];
+    for (int i = 0; i < result.x; ++i)
+        result.fields[i] = duplicateString(fullData.fields[i]);
+
+    result.data = new char**[fullData.y];
+    result.y = 0;
+
+    for (int i = 0; i < fullData.y; ++i) {
+        if (strcmp(fullData.data[i][fieldIndex], dataToMatch) == 0) {
+            result.data[result.y] = new char*[result.x];
+            for (int j = 0; j < result.x; ++j)
+                result.data[result.y][j] = duplicateString(fullData.data[i][j]);
+            result.y++;
+        }
+    }
+
+    result.error = 0;
+    deleteDataContainer2D(fullData);
+    return result;
+}
+
+dataContainer2D Search2FieldValue(const std::string& file, const char* field1, const char* key1, const char* field2, const char* key2) {
+    dataContainer2D full = getData(file);
+    if (full.error) { dataContainer2D empty; empty.error = 1; return empty; }
+
+    int index1 = -1, index2 = -1;
+    for (int i = 0; i < full.x; ++i) {
+        if (strcmp(full.fields[i], field1) == 0) index1 = i;
+        if (strcmp(full.fields[i], field2) == 0) index2 = i;
+    }
+    if (index1 == -1 || index2 == -1) {
+        deleteDataContainer2D(full);
+        dataContainer2D empty; empty.error = 1; return empty;
+    }
+
+    dataContainer2D result;
+    result.x = full.x;
+    result.y = 0;
+    result.fields = new char*[full.x];
+    for (int i = 0; i < full.x; ++i)
+        result.fields[i] = duplicateString(full.fields[i]);
+
+    result.data = new char**[full.y];
+
+    for (int i = 0; i < full.y; ++i) {
+        if (strcmp(full.data[i][index1], key1) == 0 && strcmp(full.data[i][index2], key2) == 0) {
+            result.data[result.y] = new char*[result.x];
+            for (int j = 0; j < result.x; ++j)
+                result.data[result.y][j] = duplicateString(full.data[i][j]);
+            result.y++;
+        }
+    }
+
+    deleteDataContainer2D(full);
+    return result;
+}
 
 } // namespace CsvToolkit
 
