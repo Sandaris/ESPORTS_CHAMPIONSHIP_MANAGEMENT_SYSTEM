@@ -76,7 +76,7 @@ namespace EsportsScheduler {
         char* match_id;
         char* scheduled_date;
         char* scheduled_time;
-        char* match_round_number;
+        // char* match_round_number; // REMOVE THIS LINE
         char* actual_start_time;
         char* actual_end_time;
         char* team1_id;
@@ -87,82 +87,96 @@ namespace EsportsScheduler {
         char* match_status;
         char* match_level;
 
-        Match() : match_id(nullptr), scheduled_date(nullptr), scheduled_time(nullptr), match_round_number(nullptr),
-                  actual_start_time(nullptr), actual_end_time(nullptr), team1_id(nullptr), team2_id(nullptr),
-                  winner_team_id(nullptr), team1_score(0), team2_score(0), match_status(nullptr), match_level(nullptr) {}
+        // Default constructor
+        Match() : match_id(nullptr), scheduled_date(nullptr), scheduled_time(nullptr), /* match_round_number removed */
+                actual_start_time(nullptr), actual_end_time(nullptr), team1_id(nullptr), team2_id(nullptr),
+                winner_team_id(nullptr), team1_score(0), team2_score(0), match_status(nullptr), match_level(nullptr) {}
 
-        Match(const char* mid, const char* s_date, const char* s_time, const char* round,
-              const char* t1_id, const char* t2_id, const char* status, const char* level) {
-            match_id = duplicateString(mid);
-            scheduled_date = duplicateString(s_date);
-            scheduled_time = duplicateString(s_time);
-            match_round_number = duplicateString(round);
-            actual_start_time = duplicateString("");
-            actual_end_time = duplicateString("");
-            team1_id = duplicateString(t1_id);
-            team2_id = duplicateString(t2_id);
-            winner_team_id = duplicateString("");
+        // Parameterized constructor (remove 'round' parameter)
+        Match(const char* mid, const char* s_date, const char* s_time, /* const char* round REMOVED */
+            const char* t1_id, const char* t2_id, const char* status, const char* level) {
+            match_id = CsvToolkit::duplicateString(mid);
+            scheduled_date = CsvToolkit::duplicateString(s_date);
+            scheduled_time = CsvToolkit::duplicateString(s_time);
+            // match_round_number = CsvToolkit::duplicateString(round); // REMOVE THIS LINE
+            actual_start_time = CsvToolkit::duplicateString(""); // Init empty
+            actual_end_time = CsvToolkit::duplicateString("");   // Init empty
+            team1_id = CsvToolkit::duplicateString(t1_id);
+            team2_id = CsvToolkit::duplicateString(t2_id);
+            winner_team_id = CsvToolkit::duplicateString(""); // Init empty
             team1_score = 0;
             team2_score = 0;
-            match_status = duplicateString(status);
-            match_level = duplicateString(level);
+            match_status = CsvToolkit::duplicateString(status);
+            match_level = CsvToolkit::duplicateString(level);
         }
-
-        Match(const Match& other) {
-            match_id = duplicateString(other.match_id);
-            scheduled_date = duplicateString(other.scheduled_date);
-            scheduled_time = duplicateString(other.scheduled_time);
-            match_round_number = duplicateString(other.match_round_number);
-            actual_start_time = duplicateString(other.actual_start_time);
-            actual_end_time = duplicateString(other.actual_end_time);
-            team1_id = duplicateString(other.team1_id);
-            team2_id = duplicateString(other.team2_id);
-            winner_team_id = duplicateString(other.winner_team_id);
+        
+        // Copy Constructor (remove match_round_number)
+        Match(const Match& other){
+            match_id = CsvToolkit::duplicateString(other.match_id);
+            scheduled_date = CsvToolkit::duplicateString(other.scheduled_date);
+            scheduled_time = CsvToolkit::duplicateString(other.scheduled_time);
+            // match_round_number removed
+            actual_start_time = CsvToolkit::duplicateString(other.actual_start_time);
+            actual_end_time = CsvToolkit::duplicateString(other.actual_end_time);
+            team1_id = CsvToolkit::duplicateString(other.team1_id);
+            team2_id = CsvToolkit::duplicateString(other.team2_id);
+            winner_team_id = CsvToolkit::duplicateString(other.winner_team_id);
             team1_score = other.team1_score;
             team2_score = other.team2_score;
-            match_status = duplicateString(other.match_status);
-            match_level = duplicateString(other.match_level);
+            match_status = CsvToolkit::duplicateString(other.match_status);
+            match_level = CsvToolkit::duplicateString(other.match_level);
         }
 
+        // Assignment Operator (remove match_round_number)
         Match& operator=(const Match& other) {
             if (this == &other) return *this;
-            delete[] match_id; delete[] scheduled_date; delete[] scheduled_time; delete[] match_round_number;
+            delete[] match_id; delete[] scheduled_date; delete[] scheduled_time; /* delete[] match_round_number; REMOVED */
             delete[] actual_start_time; delete[] actual_end_time; delete[] team1_id; delete[] team2_id;
             delete[] winner_team_id; delete[] match_status; delete[] match_level;
-            match_id = duplicateString(other.match_id);
-            scheduled_date = duplicateString(other.scheduled_date);
-            scheduled_time = duplicateString(other.scheduled_time);
-            match_round_number = duplicateString(other.match_round_number);
-            actual_start_time = duplicateString(other.actual_start_time);
-            actual_end_time = duplicateString(other.actual_end_time);
-            team1_id = duplicateString(other.team1_id);
-            team2_id = duplicateString(other.team2_id);
-            winner_team_id = duplicateString(other.winner_team_id);
+
+            match_id = CsvToolkit::duplicateString(other.match_id);
+            scheduled_date = CsvToolkit::duplicateString(other.scheduled_date);
+            scheduled_time = CsvToolkit::duplicateString(other.scheduled_time);
+            // match_round_number removed
+            actual_start_time = CsvToolkit::duplicateString(other.actual_start_time);
+            actual_end_time = CsvToolkit::duplicateString(other.actual_end_time);
+            team1_id = CsvToolkit::duplicateString(other.team1_id);
+            team2_id = CsvToolkit::duplicateString(other.team2_id);
+            winner_team_id = CsvToolkit::duplicateString(other.winner_team_id);
             team1_score = other.team1_score;
             team2_score = other.team2_score;
-            match_status = duplicateString(other.match_status);
-            match_level = duplicateString(other.match_level);
+            match_status = CsvToolkit::duplicateString(other.match_status);
+            match_level = CsvToolkit::duplicateString(other.match_level);
             return *this;
         }
 
+        // Destructor (remove match_round_number)
         ~Match() {
-            delete[] match_id; delete[] scheduled_date; delete[] scheduled_time; delete[] match_round_number;
+            delete[] match_id; delete[] scheduled_date; delete[] scheduled_time; /* delete[] match_round_number; REMOVED */
             delete[] actual_start_time; delete[] actual_end_time; delete[] team1_id; delete[] team2_id;
             delete[] winner_team_id; delete[] match_status; delete[] match_level;
         }
 
+        // getAsCsvRow method (adjust for 12 fields and new order)
         void getAsCsvRow(const char** rowBuffer, int bufferSize) const {
-            if (bufferSize < 13) return;
-            static std::string t1_s, t2_s;
+            if (bufferSize < 12) return; // Now 12 fields
+            
+            static std::string t1_s, t2_s; // For int to string conversion
             t1_s = std::to_string(team1_score);
             t2_s = std::to_string(team2_score);
-            rowBuffer[0] = match_id ? match_id : ""; rowBuffer[1] = scheduled_date ? scheduled_date : "";
-            rowBuffer[2] = scheduled_time ? scheduled_time : ""; rowBuffer[3] = match_round_number ? match_round_number : "";
-            rowBuffer[4] = actual_start_time ? actual_start_time : ""; rowBuffer[5] = actual_end_time ? actual_end_time : "";
-            rowBuffer[6] = team1_id ? team1_id : ""; rowBuffer[7] = team2_id ? team2_id : "";
-            rowBuffer[8] = winner_team_id ? winner_team_id : ""; rowBuffer[9] = t1_s.c_str();
-            rowBuffer[10] = t2_s.c_str(); rowBuffer[11] = match_status ? match_status : "";
-            rowBuffer[12] = match_level ? match_level : "";
+
+            rowBuffer[0] = match_id ? match_id : "";
+            rowBuffer[1] = scheduled_date ? scheduled_date : "";
+            rowBuffer[2] = scheduled_time ? scheduled_time : "";
+            rowBuffer[3] = actual_start_time ? actual_start_time : "";   // Moved up, was index 4
+            rowBuffer[4] = actual_end_time ? actual_end_time : "";     // Moved up, was index 5
+            rowBuffer[5] = team1_id ? team1_id : "";                   // Moved up, was index 6
+            rowBuffer[6] = team2_id ? team2_id : "";                   // Moved up, was index 7
+            rowBuffer[7] = winner_team_id ? winner_team_id : "";       // Moved up, was index 8
+            rowBuffer[8] = t1_s.c_str();                               // Moved up, was index 9
+            rowBuffer[9] = t2_s.c_str();                               // Moved up, was index 10
+            rowBuffer[10] = match_status ? match_status : "";          // Moved up, was index 11
+            rowBuffer[11] = match_level ? match_level : "";            // Moved up, was index 12
         }
     };
 
@@ -566,13 +580,21 @@ namespace EsportsScheduler {
     // }
 
     void writeMatchToCSV(const Match& match) {
-        const int NUM_MATCH_FIELDS = 13;
+        const int NUM_MATCH_FIELDS = 12; // Corrected number of fields
         const char* matchCsvRow[NUM_MATCH_FIELDS];
         match.getAsCsvRow(matchCsvRow, NUM_MATCH_FIELDS);
-        const char* headers[] = {"match_id","scheduled_date","scheduled_time","match_round_number","actual_start_time","actual_end_time","team1_id","team2_id","winner_team_id","team1_score","team2_score","match_status"};
-        ensureCsvHeader(MATCH_CSV, headers, NUM_MATCH_FIELDS);
-        if (writeNewDataRow(MATCH_CSV, NUM_MATCH_FIELDS, matchCsvRow) != 0) {
-            std::cerr << "Error writing match " << match.match_id << " to " << MATCH_CSV << std::endl;
+
+        // Corrected headers array to match the 12-field structure
+        const char* headers[] = {
+            "match_id", "scheduled_date", "scheduled_time", 
+            "actual_start_time", "actual_end_time", 
+            "team1_id", "team2_id", "winner_team_id", 
+            "team1_score", "team2_score", "match_status", "match_level"
+        };
+        CsvToolkit::ensureCsvHeader(MATCH_CSV, headers, NUM_MATCH_FIELDS);
+        
+        if (CsvToolkit::writeNewDataRow(MATCH_CSV, NUM_MATCH_FIELDS, matchCsvRow) != 0) {
+            std::cerr << "Error writing match " << (match.match_id ? match.match_id : "UNKNOWN_ID") << " to " << MATCH_CSV << std::endl;
         }
     }
 
@@ -769,12 +791,13 @@ char* getTimeFromUser(const char* prompt) {
                     char matchIdBuffer[20];
                     sprintf(matchIdBuffer, "MATCH%03d", getNextMatchCounterFileBased());
 
-                    Match newMatch(matchIdBuffer, newDate, newTime, "1", teamA->team_id, teamB->team_id, "Scheduled", matchLevelStr);
+                    Match newMatch(matchIdBuffer, newDate, newTime, teamA->team_id, teamB->team_id, "Scheduled", matchLevelStr);
 
                     clearTerminal();
                     std::cout << "--- Proposed New Match ---" << std::endl;
                     // Display single match (can adapt displayProposedMatches or inline)
                     std::cout << "Match ID: " << newMatch.match_id << std::endl;
+
                     std::cout << "Team 1: " << newMatch.team1_id << " (" << teamA->team_name << ")" << std::endl;
                     std::cout << "Team 2: " << newMatch.team2_id << " (" << teamB->team_name << ")" << std::endl;
                     std::cout << "Date: " << newMatch.scheduled_date << std::endl;
@@ -1203,7 +1226,7 @@ char* getTimeFromUser(const char* prompt) {
             if (allMatches.data[i][idCol] && strcmp(allMatches.data[i][idCol], matchIdToUpdate_str.c_str()) == 0) {
                 matchRowIdx = i;
                 // Populate currentMatch from CSV data
-                currentMatch = Match(allMatches.data[i][idCol], "", "", "", // Simplified, need full constructor or setters
+                currentMatch = Match(allMatches.data[i][idCol], "", "", // Simplified, need full constructor or setters
                                      allMatches.data[i][t1IdCol], allMatches.data[i][t2IdCol],
                                      allMatches.data[i][statusCol], allMatches.data[i][levelCol]);
                 // Actual date/time/round would also be copied if needed by progression
