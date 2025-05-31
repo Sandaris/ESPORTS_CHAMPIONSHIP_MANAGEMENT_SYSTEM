@@ -314,8 +314,8 @@ dataContainer2D getData(const std::string& filenameWithExtension) {
         }
 
         if (actualDataTokensInRow != M_expectedFields) {
-            std::cerr << "Warning: Row " << (rowCount + 1) << " in " << filenameWithExtension << " has " << actualDataTokensInRow
-                      << " fields, expected " << M_expectedFields << ". Padding with empty strings." << std::endl;
+            // std::cerr << "Warning: Row " << (rowCount + 1) << " in " << filenameWithExtension << " has " << actualDataTokensInRow
+            //           << " fields, expected " << M_expectedFields << ". Padding with empty strings." << std::endl;
             for(int k=actualDataTokensInRow; k < M_expectedFields; ++k) {
                 if (container.data[rowCount][k] == nullptr) { // If parseCsvRow didn't fill it
                     container.data[rowCount][k] = new char[1];
