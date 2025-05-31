@@ -569,7 +569,7 @@ namespace EsportsScheduler {
         const int NUM_MATCH_FIELDS = 13;
         const char* matchCsvRow[NUM_MATCH_FIELDS];
         match.getAsCsvRow(matchCsvRow, NUM_MATCH_FIELDS);
-        const char* headers[] = {"match_id","scheduled_date","scheduled_time","match_round_number","actual_start_time","actual_end_time","team1_id","team2_id","winner_team_id","team1_score","team2_score","match_status","match_level"};
+        const char* headers[] = {"match_id","scheduled_date","scheduled_time","match_round_number","actual_start_time","actual_end_time","team1_id","team2_id","winner_team_id","team1_score","team2_score","match_status"};
         ensureCsvHeader(MATCH_CSV, headers, NUM_MATCH_FIELDS);
         if (writeNewDataRow(MATCH_CSV, NUM_MATCH_FIELDS, matchCsvRow) != 0) {
             std::cerr << "Error writing match " << match.match_id << " to " << MATCH_CSV << std::endl;
@@ -775,7 +775,6 @@ char* getTimeFromUser(const char* prompt) {
                     std::cout << "--- Proposed New Match ---" << std::endl;
                     // Display single match (can adapt displayProposedMatches or inline)
                     std::cout << "Match ID: " << newMatch.match_id << std::endl;
-                    std::cout << "Level: " << newMatch.match_level << std::endl;
                     std::cout << "Team 1: " << newMatch.team1_id << " (" << teamA->team_name << ")" << std::endl;
                     std::cout << "Team 2: " << newMatch.team2_id << " (" << teamB->team_name << ")" << std::endl;
                     std::cout << "Date: " << newMatch.scheduled_date << std::endl;
