@@ -26,8 +26,9 @@ int main() {
             int choice = displayMenu("System Main Menu", menuOptions, 5);
 
             switch (choice) 
-            {
-                case 1: manage_scheduling_and_progression(); break;
+            {   
+                //manage_scheduling_and_progression
+                case 1: manageMatchSchedulingAndProgression(); break;
                 case 2: printf("Registration & Player Management"); break;
                 case 3: printf("Live Stream & Spectator Management"); break;
                 case 4: record_N_Analysis(); break;
