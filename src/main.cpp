@@ -12,6 +12,8 @@ using namespace EsportsScheduler;
 #include "File_exe.hpp"          // Your CsvToolkit library/ The Task 4 module defined above
 
 int main() {
+
+    srand(time(0));
    
     bool running = true;
         while (running) {
