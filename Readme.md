@@ -1,8 +1,129 @@
-# Data
+# Esports Championship Management System Overview
 
-- player.csv
-- match.csv
-- 
+The Esports Championship Management System is a C++ application designed to manage various aspects of an esports tournament. This includes team and player registration, match scheduling, tournament progression, live game data tracking, player performance analytics, and spectator/stream management. The system relies on CSV files for data storage and retrieval, utilizing a custom CSV Toolkit for these operations.
+
+## Key Features
+
+### Team and Player Management
+- Team registration with automatic ID generation and type assignment (EarlyBird, WaitingList).
+- Player registration within teams, including roles (Main/Sub) and eligibility status.
+- Team withdrawal processing and automatic promotion of waiting list teams.
+- Team and player check-in system.
+- Viewing of team priority lists and final eligible teams.
+
+### Tournament Scheduling and Progression
+- Generation of initial match schedules based on team rankings.
+- Dynamic team ranking calculation based on match results.
+- Updating match results, including scores and actual start/end times.
+- Automatic progression of teams through upper and lower brackets based on match outcomes.
+- Scheduling of progression matches, including Grand Finals.
+- Management of the tournament bracket, stored in `tournament_bracket.csv`.
+- Viewing of overall team rankings, match schedules, and bracket progress.
+
+### Match Result Tracking
+- Recording detailed match outcomes, including team scores and winner.
+- Storing match history and status (e.g., Scheduled, Completed).
+
+### Player Performance Analytics
+- Loading and analyzing player statistics from `gameStat.csv` (e.g., kills, deaths, assists, GPM, XPM).
+- Viewing detailed performance records for individual players.
+- Sorting and displaying player statistics by various metrics.
+- Logging new match outcomes for analytical review.
+
+### Data Management
+- All data is stored and managed through CSV files located in the `data/` directory.
+
+### Modular Design
+- The system is divided into modules for analytics, scheduling, and player management.
+
+## System Modules
+
+### Main Application (`main.cpp`)
+- The entry point of the system.
+- Provides a console-based main menu to navigate through different functionalities:
+  - Scheduling & Progression
+  - Registration & Player Management
+  - Live Stream & Spectator Management (partially implemented)
+  - Performance & Analytics
+
+### Esports Player Management (`EsportsPlayerManagement.hpp`)
+- Handles all operations related to team and player registration, withdrawals, check-ins, and eligibility.
+- Interacts primarily with `teams.csv` and `player.csv`.
+
+### Esports Scheduler (`EsportsScheduler.hpp`)
+- Manages the creation and updating of match schedules, tournament brackets, and team rankings.
+- Handles match result updates and team progression through the tournament.
+- Generates placeholder game statistics for completed matches.
+- Interacts with `teams.csv`, `match.csv`, `player.csv`, `gameStat.csv`, and `tournament_bracket.csv`.
+
+### Esports Analytics (`EsportsAnalytics1.cpp`, `EsportsAnalytics1.hpp`)
+- Focuses on recording and analyzing match outcomes and player statistics.
+- Loads data from `match.csv` (match outcomes) and `gameStat.csv` (player performance).
+- Allows users to view match histories and player stats, sorted by different metrics.
+
+### CSV Toolkit (`File_exe.hpp`)
+- A comprehensive utility library for handling all CSV file operations.
+- Provides functions for reading, writing, parsing, modifying, and querying data from CSV files.
+- Used by all other modules for data persistence.
+
+## Data Files
+
+The system uses the following CSV files, typically located in the `data/` directory:
+- `teams.csv`: Stores information about registered teams, including their ID, name, university, country, registration date, ranking points, and status (Registered, WaitingList, Withdrawn, CheckedIn).
+- `player.csv`: Contains details for each player, such as PlayerID, name, affiliated TeamID, role, university, country, in-game name, email, ranking points, and status (CheckedIn, Pending, Eligible, Standby, Withdrawn).
+- `match.csv`: Logs all scheduled and completed matches, detailing match ID, dates/times (scheduled and actual), participating team IDs, winner, scores, status, and match level (e.g., Group Stage, Upper Bracket R1).
+- `gameStat.csv`: Records per-player statistics for each match, including in-game name, hero played, kills, deaths, assists, GPM (Gold Per Minute), and XPM (Experience Per Minute).
+- `tournament_bracket.csv`: Tracks the position and status of each team within the tournament bracket structure (e.g., upper_bracket, lower_bracket, eliminated, position like UB-R1-Winner).
+- `spectators.csv`: Information about registered spectators (ID, name, type, contact). (Used by planned Live Stream & Spectator Management module)
+- `seatAssignment.csv`: Details on seat assignments for spectators. (Used by planned Live Stream & Spectator Management module)
+- `streamSchedule.csv`: Schedule for live streams of matches, including platform and streamer. (Used by planned Live Stream & Spectator Management module)
+
+## Directory Structure
+- `src/`: Contains all C++ source (.cpp) and header (.hpp) files for the project.
+- `data/`: Default directory for storing all CSV data files utilized by the system.
+- `.vscode/`: Contains Visual Studio Code editor settings, including file associations for C++ development.
+
+## CSV Toolkit (`File_exe.hpp`) Summary
+
+The `File_exe.hpp` (CSV Toolkit) is a crucial component providing robust CSV file handling capabilities.
+
+### Purpose
+To abstract CSV parsing, reading, writing, and manipulation, allowing other modules to work with CSV data through a structured API.
+
+### Key Data Structures
+- `dataContainer2D`: Represents a 2D table of CSV data, including headers and rows.
+- `dataContainer1D`: Represents a 1D array of data, often used for a single column or row.
+
+### Core Functionalities
+- **Parsing**: `parseCsvRow` to break down a CSV line into tokens. `getData` to load an entire CSV into a `dataContainer2D`.
+- **Memory Management**: `deleteDataContainer1D` and `deleteDataContainer2D` for freeing allocated memory.
+- **Data Manipulation**: Functions like `concatDataContainer` (joins), `filterDataContainer`, `getFieldValues` (extracts a column), `shortenDataContainer` (selects specific columns).
+- **Display**: `displayTabulatedData` for console output of 2D data, and various menu display functions (`displayOptions`, `displayMenu`).
+- **User Input**: `getString`, `getInt`, `getFloat` for validated user input.
+- **Querying**: `queryKey` (find row by key in first column), `queryField` (extract column), `queryFieldStrict` (filter by field value).
+- **Writing/Updating/Deleting**: `writeData` (overwrite entire file), `writeNewDataRow` (append row). `updateDataByUniqueKey`, `updateDataBySecondKey` (update specific rows). `deleteByKey`, `deleteBySecondKey` (delete specific rows).
+- **Path Handling**: Attempts to locate the `data/` directory relative to the executable.
+
+## Getting Started / How to Run
+
+### Prerequisites
+- A C++ compiler supporting C++17 (for `std::filesystem`).
+
+### Compilation
+- Compile all `.cpp` files located in the `src/` directory.
+- Link the compiled object files to create an executable.
+- Example (g++): `g++ src/*.cpp -o esports_manager -std=c++17 -lstdc++fs`
+  - (The exact command might vary based on your compiler and environment. `EsportsAnalytics1.cpp` is included in `main.cpp`, so it might not need to be explicitly listed if your build process handles includes correctly, otherwise, list all `.cpp` files).
+
+### Data Directory
+- Ensure a directory named `data/` exists.
+- The CSV Toolkit typically expects this directory to be located one level up from the directory containing the executable (e.g., if executable is in `bin/`, `data/` should be in the project root alongside `bin/` and `src/`) or directly in the same directory as the executable if the parent path logic fails.
+- Refer to the `openCsvFileForWrite` and `getData` functions in `File_exe.hpp` for precise path resolution logic.
+- Populate the `data/` directory with the necessary CSV files if starting with existing data. Some files like `tournament_bracket.csv` may be created/populated by the system.
+
+### Execution
+- Run the compiled executable from your terminal.
+
 
 
 # CSV Toolkit Library Function Reference
