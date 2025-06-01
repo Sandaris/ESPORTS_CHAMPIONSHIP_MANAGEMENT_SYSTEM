@@ -2,6 +2,7 @@
 #include "File_exe.hpp"
 #include "EsportsAnalytics1.cpp"
 #include "EsportsScheduler.hpp" 
+#include "EsportsPlayerManagement.hpp"
 
 using namespace CsvToolkit;
 using namespace std;
@@ -29,7 +30,7 @@ int main() {
             {   
                 //manage_scheduling_and_progression
                 case 1: manageMatchSchedulingAndProgression(); break;
-                case 2: printf("Registration & Player Management"); break;
+                case 2: RegistrationPlayerManagement(); break;
                 case 3: printf("Live Stream & Spectator Management"); break;
                 case 4: record_N_Analysis(); break;
                 case 5: running = false; break;
