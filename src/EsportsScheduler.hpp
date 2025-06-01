@@ -95,36 +95,36 @@ namespace EsportsScheduler {
         // Parameterized constructor (remove 'round' parameter)
         Match(const char* mid, const char* s_date, const char* s_time, /* const char* round REMOVED */
             const char* t1_id, const char* t2_id, const char* status, const char* level) {
-            match_id = CsvToolkit::duplicateString(mid);
-            scheduled_date = CsvToolkit::duplicateString(s_date);
-            scheduled_time = CsvToolkit::duplicateString(s_time);
-            // match_round_number = CsvToolkit::duplicateString(round); // REMOVE THIS LINE
-            actual_start_time = CsvToolkit::duplicateString(""); // Init empty
-            actual_end_time = CsvToolkit::duplicateString("");   // Init empty
-            team1_id = CsvToolkit::duplicateString(t1_id);
-            team2_id = CsvToolkit::duplicateString(t2_id);
-            winner_team_id = CsvToolkit::duplicateString(""); // Init empty
+            match_id = duplicateString(mid);
+            scheduled_date = duplicateString(s_date);
+            scheduled_time = duplicateString(s_time);
+            // match_round_number = duplicateString(round); // REMOVE THIS LINE
+            actual_start_time = duplicateString(""); // Init empty
+            actual_end_time = duplicateString("");   // Init empty
+            team1_id = duplicateString(t1_id);
+            team2_id = duplicateString(t2_id);
+            winner_team_id = duplicateString(""); // Init empty
             team1_score = 0;
             team2_score = 0;
-            match_status = CsvToolkit::duplicateString(status);
-            match_level = CsvToolkit::duplicateString(level);
+            match_status = duplicateString(status);
+            match_level = duplicateString(level);
         }
         
         // Copy Constructor (remove match_round_number)
         Match(const Match& other){
-            match_id = CsvToolkit::duplicateString(other.match_id);
-            scheduled_date = CsvToolkit::duplicateString(other.scheduled_date);
-            scheduled_time = CsvToolkit::duplicateString(other.scheduled_time);
+            match_id = duplicateString(other.match_id);
+            scheduled_date = duplicateString(other.scheduled_date);
+            scheduled_time = duplicateString(other.scheduled_time);
             // match_round_number removed
-            actual_start_time = CsvToolkit::duplicateString(other.actual_start_time);
-            actual_end_time = CsvToolkit::duplicateString(other.actual_end_time);
-            team1_id = CsvToolkit::duplicateString(other.team1_id);
-            team2_id = CsvToolkit::duplicateString(other.team2_id);
-            winner_team_id = CsvToolkit::duplicateString(other.winner_team_id);
+            actual_start_time = duplicateString(other.actual_start_time);
+            actual_end_time = duplicateString(other.actual_end_time);
+            team1_id = duplicateString(other.team1_id);
+            team2_id = duplicateString(other.team2_id);
+            winner_team_id = duplicateString(other.winner_team_id);
             team1_score = other.team1_score;
             team2_score = other.team2_score;
-            match_status = CsvToolkit::duplicateString(other.match_status);
-            match_level = CsvToolkit::duplicateString(other.match_level);
+            match_status = duplicateString(other.match_status);
+            match_level = duplicateString(other.match_level);
         }
 
         // Assignment Operator (remove match_round_number)
@@ -134,19 +134,19 @@ namespace EsportsScheduler {
             delete[] actual_start_time; delete[] actual_end_time; delete[] team1_id; delete[] team2_id;
             delete[] winner_team_id; delete[] match_status; delete[] match_level;
 
-            match_id = CsvToolkit::duplicateString(other.match_id);
-            scheduled_date = CsvToolkit::duplicateString(other.scheduled_date);
-            scheduled_time = CsvToolkit::duplicateString(other.scheduled_time);
+            match_id = duplicateString(other.match_id);
+            scheduled_date = duplicateString(other.scheduled_date);
+            scheduled_time = duplicateString(other.scheduled_time);
             // match_round_number removed
-            actual_start_time = CsvToolkit::duplicateString(other.actual_start_time);
-            actual_end_time = CsvToolkit::duplicateString(other.actual_end_time);
-            team1_id = CsvToolkit::duplicateString(other.team1_id);
-            team2_id = CsvToolkit::duplicateString(other.team2_id);
-            winner_team_id = CsvToolkit::duplicateString(other.winner_team_id);
+            actual_start_time = duplicateString(other.actual_start_time);
+            actual_end_time = duplicateString(other.actual_end_time);
+            team1_id = duplicateString(other.team1_id);
+            team2_id = duplicateString(other.team2_id);
+            winner_team_id = duplicateString(other.winner_team_id);
             team1_score = other.team1_score;
             team2_score = other.team2_score;
-            match_status = CsvToolkit::duplicateString(other.match_status);
-            match_level = CsvToolkit::duplicateString(other.match_level);
+            match_status = duplicateString(other.match_status);
+            match_level = duplicateString(other.match_level);
             return *this;
         }
 
@@ -268,6 +268,102 @@ namespace EsportsScheduler {
             return arr[top_idx]; // Uses Team's copy constructor
         }
     };
+
+    struct BracketEntry {
+    char* team_id;
+    char* position;
+    char* bracket_status; // Renamed from 'bracket' to avoid conflict with bracket keyword
+    int sort_priority;
+
+    // Constructor
+    BracketEntry(const char* tid = nullptr, const char* pos = nullptr, const char* br_status = nullptr) 
+        : sort_priority(9999) { // Default to a high number (low priority)
+        team_id = CsvToolkit::duplicateString(tid);
+        position = CsvToolkit::duplicateString(pos);
+        bracket_status = CsvToolkit::duplicateString(br_status);
+        setSortPriority();
+    }
+    
+    // Constructor from CSV row data
+    BracketEntry(char** rowData, int numCols, int teamIdColIdx, int posColIdx, int bracketColIdx)
+        : sort_priority(9999) { // Default to a high number (low priority)
+        team_id = (teamIdColIdx != -1 && rowData[teamIdColIdx]) ? CsvToolkit::duplicateString(rowData[teamIdColIdx]) : CsvToolkit::duplicateString("");
+        position = (posColIdx != -1 && rowData[posColIdx]) ? CsvToolkit::duplicateString(rowData[posColIdx]) : CsvToolkit::duplicateString("");
+        bracket_status = (bracketColIdx != -1 && rowData[bracketColIdx]) ? CsvToolkit::duplicateString(rowData[bracketColIdx]) : CsvToolkit::duplicateString("");
+        setSortPriority();
+    }
+
+
+    void setSortPriority() {
+        if (position) {
+            if (strcmp(position, "Champion") == 0) sort_priority = 1;
+            else if (strcmp(position, "1st Runner Up") == 0) sort_priority = 2;
+            else if (strcmp(position, "2nd Runner Up") == 0) sort_priority = 3; // Assuming this status exists
+            else if (strcmp(position, "3rd Runner Up") == 0) sort_priority = 4;
+            else if (strcmp(position, "Eliminated-LB-R1") == 0) sort_priority = 100; // Specific eliminated
+            else if (strcmp(position, "Eliminated") == 0) sort_priority = 110;       // Generic eliminated
+            else if (strstr(position, "Eliminated") != nullptr) sort_priority = 120; // Broader eliminated catch
+            // Active teams (lower sort priority - appear after placed/eliminated)
+            else if (strstr(position, "Winner") != nullptr || strstr(position, "Advanced") != nullptr || 
+                     strstr(position, "FromUB") != nullptr || strstr(position, "To-Final") != nullptr ||
+                     strstr(position, "In Match") != nullptr || strstr(position, "Slot") != nullptr || /* For positions like UB-R1-M1-S1 */
+                     strstr(position, "UB-") != nullptr || strstr(position, "LB-") != nullptr ) { /* Generic active */
+                 sort_priority = 500;
+            } else {
+                 sort_priority = 600; // Other unknown active statuses
+            }
+        }
+        // Further refine by bracket_status if needed
+        if (bracket_status) {
+            if (strcmp(bracket_status, "eliminated") == 0 && sort_priority > 120) sort_priority = 115; // ensure eliminated is grouped
+            if (strcmp(bracket_status, "finished_placing") == 0 && sort_priority > 4 && sort_priority < 100) {
+                // This implies a placing that wasn't Champion, 1st, 2nd, 3rd.
+                // For now, position string is the primary key for placings.
+            }
+        }
+    }
+
+
+    // Copy Constructor
+    BracketEntry(const BracketEntry& other) {
+        team_id = CsvToolkit::duplicateString(other.team_id);
+        position = CsvToolkit::duplicateString(other.position);
+        bracket_status = CsvToolkit::duplicateString(other.bracket_status);
+        sort_priority = other.sort_priority;
+    }
+
+    // Assignment Operator
+    BracketEntry& operator=(const BracketEntry& other) {
+        if (this == &other) return *this;
+        delete[] team_id; delete[] position; delete[] bracket_status;
+        team_id = CsvToolkit::duplicateString(other.team_id);
+        position = CsvToolkit::duplicateString(other.position);
+        bracket_status = CsvToolkit::duplicateString(other.bracket_status);
+        sort_priority = other.sort_priority;
+        return *this;
+    }
+    
+    ~BracketEntry() {
+        delete[] team_id;
+        delete[] position;
+        delete[] bracket_status;
+    }
+};
+
+bool compareBracketEntries(const BracketEntry& a, const BracketEntry& b) {
+    if (a.sort_priority != b.sort_priority) {
+        return a.sort_priority < b.sort_priority;
+    }
+    // Secondary sort: by team_id alphabetically if priorities are the same
+    if (a.team_id && b.team_id) {
+         return strcmp(a.team_id, b.team_id) < 0;
+    } else if (a.team_id) { // a is not null, b is null
+        return true;
+    } else if (b.team_id) { // b is not null, a is null
+        return false;
+    }
+    return false; // Both null or equal
+}
 
 
     int getNextMatchCounterFileBased() {
@@ -591,9 +687,9 @@ namespace EsportsScheduler {
             "team1_id", "team2_id", "winner_team_id", 
             "team1_score", "team2_score", "match_status", "match_level"
         };
-        CsvToolkit::ensureCsvHeader(MATCH_CSV, headers, NUM_MATCH_FIELDS);
+        ensureCsvHeader(MATCH_CSV, headers, NUM_MATCH_FIELDS);
         
-        if (CsvToolkit::writeNewDataRow(MATCH_CSV, NUM_MATCH_FIELDS, matchCsvRow) != 0) {
+        if (writeNewDataRow(MATCH_CSV, NUM_MATCH_FIELDS, matchCsvRow) != 0) {
             std::cerr << "Error writing match " << (match.match_id ? match.match_id : "UNKNOWN_ID") << " to " << MATCH_CSV << std::endl;
         }
     }
@@ -861,204 +957,6 @@ char* getTimeFromUser(const char* prompt) {
         getString("Press Enter to continue...");
     }
 
-    //     void generateInitialSchedule() 
-    // {
-    //     clearTerminal();
-    //     std::cout << "--- Generating Initial Schedule (based on calculated rankings) ---" << std::endl;
-        
-    //     int totalTeamCount = 0;
-    //     Team* allTeams = loadTeamsFromCSV(totalTeamCount);
-
-    //     if (!allTeams || totalTeamCount < 8) {
-    //         std::cout << "Not enough teams to form standard brackets (need at least 8)." << std::endl;
-    //         if (allTeams) {
-    //             for (int i = 0; i < totalTeamCount; ++i) allTeams[i].~Team();
-    //             ::operator delete[](allTeams);
-    //         }
-    //         getString("Press Enter to continue...");
-    //         return;
-    //     }
-
-    //     // Calculate dynamic ranking points and re-sort
-    //     calculateAndUpdateTeamRankingPoints(allTeams, totalTeamCount, MATCH_CSV);
-    //     if (totalTeamCount > 0) {
-    //         std::sort(allTeams, allTeams + totalTeamCount, compareTeams);
-    //     }
-    //     std::cout << "Teams ranked based on completed match performance." << std::endl;
-
-    //     Team upperBracketTeams[4]; int ubCount = 0;
-    //     Team lowerBracketTeams[4]; int lbCount = 0;
-    //     // Teams that won't be in the initial 8-team bracket (for tournament_bracket.csv status)
-    //     Team* disqualifiedForThisBracket = new Team[totalTeamCount > 8 ? totalTeamCount - 8 : 0];
-    //     int dqCount = 0;
-
-
-    //     for (int i = 0; i < totalTeamCount; ++i) {
-    //         if (i < 4) {
-    //             upperBracketTeams[ubCount++] = allTeams[i]; // Copy assignment
-    //         } else if (i < 8) {
-    //             lowerBracketTeams[lbCount++] = allTeams[i]; // Copy assignment
-    //         } else {
-    //             if (dqCount < (totalTeamCount - 8)) { // Defensive check
-    //                 disqualifiedForThisBracket[dqCount++] = allTeams[i];
-    //             }
-    //         }
-    //     }
-
-    //     // --- Generate Proposed Matches ---
-    //     Match proposedMatches[4]; // 2 UB + 2 LB
-    //     int currentProposedMatchCount = 0;
-    //     char matchIdBuffer[20];
-    //     const char* defaultDate = "YYYY-MM-DD"; // Placeholder
-    //     const char* defaultTimeUB = "10:00";
-    //     const char* defaultTimeLB = "14:00";
-
-    //     // UB Matches: Seed 1 vs 4, Seed 2 vs 3 (after dynamic ranking)
-    //     if (ubCount == 4) {
-    //         sprintf(matchIdBuffer, "MATCH%03d", getNextMatchCounterFileBased()); // Ensure this counter is robust
-    //         proposedMatches[currentProposedMatchCount++] = Match(matchIdBuffer, defaultDate, defaultTimeUB, "1", upperBracketTeams[0].team_id, upperBracketTeams[3].team_id, "Scheduled", "Upper Bracket R1");
-            
-    //         sprintf(matchIdBuffer, "MATCH%03d", getNextMatchCounterFileBased());
-    //         proposedMatches[currentProposedMatchCount++] = Match(matchIdBuffer, defaultDate, defaultTimeUB, "1", upperBracketTeams[1].team_id, upperBracketTeams[2].team_id, "Scheduled", "Upper Bracket R1");
-    //     }
-    //     // LB Matches: Seed 5 vs 8, Seed 6 vs 7 (after dynamic ranking)
-    //     if (lbCount == 4) {
-    //         sprintf(matchIdBuffer, "MATCH%03d", getNextMatchCounterFileBased());
-    //         proposedMatches[currentProposedMatchCount++] = Match(matchIdBuffer, defaultDate, defaultTimeLB, "1", lowerBracketTeams[0].team_id, lowerBracketTeams[3].team_id, "Scheduled", "Lower Bracket R1");
-
-    //         sprintf(matchIdBuffer, "MATCH%03d", getNextMatchCounterFileBased());
-    //         proposedMatches[currentProposedMatchCount++] = Match(matchIdBuffer, defaultDate, defaultTimeLB, "1", lowerBracketTeams[1].team_id, lowerBracketTeams[2].team_id, "Scheduled", "Lower Bracket R1");
-    //     }
-
-    //     bool saveSchedule = false; // Flag to determine if we should save
-
-    //     if (currentProposedMatchCount > 0) {
-    //         bool modifying = true;
-    //         while (modifying) {
-    //             clearTerminal();
-    //             std::cout << "--- Proposed Initial Match Schedule ---" << std::endl;
-    //             displayProposedMatches(proposedMatches, currentProposedMatchCount);
-                
-    //             char* choice_cstr = getString("\nModify date/time for any match? (yes/no/cancel): ");
-    //             std::string choice_str = choice_cstr;
-    //             delete[] choice_cstr;
-    //             for(char &c : choice_str) c = std::tolower(c);
-
-    //             if (choice_str == "yes" || choice_str == "y") {
-    //                 int matchNum = getInt("Enter match number (1-4) to modify, or 0 to finish: ");
-    //                 if (matchNum >= 1 && matchNum <= currentProposedMatchCount) {
-    //                     int matchIdx = matchNum - 1;
-    //                     std::cout << "Modifying Match ID: " << proposedMatches[matchIdx].match_id << std::endl;
-                        
-    //                     delete[] proposedMatches[matchIdx].scheduled_date; // free old date
-    //                     char* newDate = getString("Enter new Scheduled Date (YYYY-MM-DD): ");
-    //                     proposedMatches[matchIdx].scheduled_date = newDate; // duplicateString(newDate); newDate is already heap
-                        
-    //                     delete[] proposedMatches[matchIdx].scheduled_time; // free old time
-    //                     char* newTime = getString("Enter new Scheduled Time (HH:MM): ");
-    //                     proposedMatches[matchIdx].scheduled_time = newTime; // duplicateString(newTime);
-    //                 } else if (matchNum == 0) {
-    //                     modifying = false; // Finished modifying
-    //                 } else {
-    //                     displaySystemMessage("Invalid match number.", 2);
-    //                 }
-    //             } else if (choice_str == "no" || choice_str == "n") {
-    //                 modifying = false; // No modifications desired
-    //                 saveSchedule = true; // Proceed to confirm save
-    //             } else if (choice_str == "cancel" || choice_str == "c") {
-    //                 modifying = false;
-    //                 saveSchedule = false; // Cancelled generation
-    //                 std::cout << "Schedule generation cancelled." << std::endl;
-    //             } else {
-    //                 displaySystemMessage("Invalid input. Please type 'yes', 'no', or 'cancel'.", 2);
-    //             }
-    //         }
-
-    //         if (saveSchedule) { // If not cancelled and user finished modification phase or said no to modifying
-    //             clearTerminal();
-    //             std::cout << "--- Final Proposed Schedule ---" << std::endl;
-    //             displayProposedMatches(proposedMatches, currentProposedMatchCount);
-    //             char* confirm_cstr = getString("Save this schedule to CSVs? (yes/no): ");
-    //             std::string confirm_str = confirm_cstr;
-    //             delete[] confirm_cstr;
-    //             for(char &c : confirm_str) c = std::tolower(c);
-
-    //             if (confirm_str == "yes" || confirm_str == "y") {
-    //                 // --- Populate tournament_bracket.csv ---
-    //                 dataContainer2D bracketData;
-    //                 bracketData.x = 3;
-    //                 bracketData.fields = new char*[bracketData.x];
-    //                 bracketData.fields[0] = duplicateString("team_id");
-    //                 bracketData.fields[1] = duplicateString("position");
-    //                 bracketData.fields[2] = duplicateString("bracket");
-                    
-    //                 int bracketEntriesCount = ubCount + lbCount + dqCount;
-    //                 bracketData.data = new char**[bracketEntriesCount > 0 ? bracketEntriesCount : 1]; // Avoid new char**[0]
-    //                 bracketData.y = 0;
-
-    //                 auto addTeamToBracketCSV = [&](const Team& team, const char* pos, const char* bracket_name) {
-    //                     if (bracketData.y < bracketEntriesCount) {
-    //                         bracketData.data[bracketData.y] = new char*[bracketData.x];
-    //                         bracketData.data[bracketData.y][0] = duplicateString(team.team_id);
-    //                         bracketData.data[bracketData.y][1] = duplicateString(pos);
-    //                         bracketData.data[bracketData.y][2] = duplicateString(bracket_name);
-    //                         bracketData.y++;
-    //                     }
-    //                 };
-    //                 if (ubCount == 4) {
-    //                     addTeamToBracketCSV(upperBracketTeams[0], "UB-R1-M1-S1", "upper_bracket");
-    //                     addTeamToBracketCSV(upperBracketTeams[3], "UB-R1-M1-S2", "upper_bracket");
-    //                     addTeamToBracketCSV(upperBracketTeams[1], "UB-R1-M2-S1", "upper_bracket");
-    //                     addTeamToBracketCSV(upperBracketTeams[2], "UB-R1-M2-S2", "upper_bracket");
-    //                 }
-    //                 if (lbCount == 4) {
-    //                     addTeamToBracketCSV(lowerBracketTeams[0], "LB-R1-M1-S1", "lower_bracket");
-    //                     addTeamToBracketCSV(lowerBracketTeams[3], "LB-R1-M1-S2", "lower_bracket");
-    //                     addTeamToBracketCSV(lowerBracketTeams[1], "LB-R1-M2-S1", "lower_bracket");
-    //                     addTeamToBracketCSV(lowerBracketTeams[2], "LB-R1-M2-S2", "lower_bracket");
-    //                 }
-    //                 for(int i=0; i < dqCount; ++i) {
-    //                     addTeamToBracketCSV(disqualifiedForThisBracket[i], "DQ-Initial", "disqualified");
-    //                 }
-
-    //                 writeData(TOURNAMENT_BRACKET_CSV, bracketData);
-    //                 deleteDataContainer2D(bracketData);
-    //                 std::cout << "Initial bracket positions written to " << TOURNAMENT_BRACKET_CSV << std::endl;
-
-    //                 // --- Write matches to match.csv ---
-    //                 for (int i = 0; i < currentProposedMatchCount; ++i) {
-    //                     writeMatchToCSV(proposedMatches[i]);
-    //                 }
-    //                 std::cout << currentProposedMatchCount << " initial matches saved to " << MATCH_CSV << std::endl;
-    //                 saveSchedule = true; // Confirm it was saved
-    //             } else {
-    //                 std::cout << "Schedule saving cancelled." << std::endl;
-    //                 saveSchedule = false;
-    //             }
-    //         }
-
-
-    //     } else {
-    //         std::cout << "Could not generate any proposed matches (likely due to insufficient teams)." << std::endl;
-    //     }
-
-    //     // Cleanup dynamically allocated allTeams and disqualifiedForThisBracket
-    //     if (allTeams) {
-    //         for (int i = 0; i < totalTeamCount; ++i) allTeams[i].~Team();
-    //         ::operator delete[](allTeams);
-    //     }
-    //     if (totalTeamCount > 8) { // Only delete if it was allocated with a size > 0
-    //         for(int i=0; i < dqCount; ++i) disqualifiedForThisBracket[i].~Team(); // Call destructors
-    //         delete[] disqualifiedForThisBracket; // delete array itself
-    //     } else {
-    //         delete[] disqualifiedForThisBracket; // delete even if size was 0 (new Team[0] is valid, delete[] on it is valid)
-    //     }
-    //     // proposedMatches is a stack array, its Match destructors will be called automatically when it goes out of scope.
-    //     // upperBracketTeams and lowerBracketTeams are also stack arrays of Team objects, destructors called.
-
-    //     getString("Press Enter to continue...");
-    // }
-
     void displayMatchSchedule() {
         clearTerminal();
         std::cout << "--- Current Match Schedule ---" << std::endl;
@@ -1073,110 +971,169 @@ char* getTimeFromUser(const char* prompt) {
     }
 
     void displayBracketProgress() {
-        clearTerminal();
-        std::cout << "--- Bracket Progress ---" << std::endl;
-        std::cout << "Team Positions/Status (from " << TOURNAMENT_BRACKET_CSV << "):" << std::endl;
-        dataContainer2D bracketInfo = getData(TOURNAMENT_BRACKET_CSV);
-        if (!bracketInfo.error && bracketInfo.y > 0) {
-            displayTabulatedData(bracketInfo);
-        } else {
-            std::cout << "No bracket position data found." << std::endl;
-        }
-        deleteDataContainer2D(bracketInfo);
+        CsvToolkit::clearTerminal();
+        std::cout << "--- Bracket Progress (Sorted by Placing) ---" << std::endl;
+        
+        CsvToolkit::dataContainer2D bracketInfo = CsvToolkit::getData(TOURNAMENT_BRACKET_CSV);
 
-        std::cout << "\nCompleted Matches (from " << MATCH_CSV << "):" << std::endl;
-        dataContainer2D allMatches = getData(MATCH_CSV);
-        dataContainer2D completedMatches = filterDataContainer(allMatches, "match_status", "Completed");
-        if (!completedMatches.error && completedMatches.y > 0) {
-            displayTabulatedData(completedMatches);
+        if (!bracketInfo.error && bracketInfo.y > 0) {
+            int teamIdCol = -1, posCol = -1, bracketCol = -1;
+            // Ensure we find the columns based on actual headers from bracketInfo.fields
+            if(bracketInfo.fields && bracketInfo.x >=3) { // Assuming at least 3 columns
+                for (int k = 0; k < bracketInfo.x; ++k) {
+                    if (strcmp(bracketInfo.fields[k], "team_id") == 0) teamIdCol = k;
+                    else if (strcmp(bracketInfo.fields[k], "position") == 0) posCol = k;
+                    else if (strcmp(bracketInfo.fields[k], "bracket") == 0) bracketCol = k;
+                }
+            }
+
+            if (teamIdCol == -1 || posCol == -1 || bracketCol == -1) {
+                std::cerr << "Error: Required columns ('team_id', 'position', 'bracket') not found in " << TOURNAMENT_BRACKET_CSV << "." << std::endl;
+                std::cout << "Displaying data unsorted." << std::endl;
+                CsvToolkit::displayTabulatedData(bracketInfo);
+            } else {
+                BracketEntry* entries = new BracketEntry[bracketInfo.y > 0 ? bracketInfo.y : 1];
+                for (int i = 0; i < bracketInfo.y; ++i) {
+                    entries[i] = BracketEntry(bracketInfo.data[i], bracketInfo.x, teamIdCol, posCol, bracketCol);
+                }
+
+                std::sort(entries, entries + bracketInfo.y, compareBracketEntries);
+
+                // Create a new dataContainer2D for display, using the original headers' order if possible,
+                // or a fixed order of the 3 main columns.
+                CsvToolkit::dataContainer2D sortedDisplayData;
+                sortedDisplayData.x = 3; // Displaying team_id, position, bracket
+                sortedDisplayData.fields = new char*[sortedDisplayData.x];
+                // Use original field names if found, otherwise default
+                sortedDisplayData.fields[0] = CsvToolkit::duplicateString( (teamIdCol != -1 && bracketInfo.fields[teamIdCol]) ? bracketInfo.fields[teamIdCol] : "team_id" );
+                sortedDisplayData.fields[1] = CsvToolkit::duplicateString( (posCol != -1 && bracketInfo.fields[posCol]) ? bracketInfo.fields[posCol] : "position" );
+                sortedDisplayData.fields[2] = CsvToolkit::duplicateString( (bracketCol != -1 && bracketInfo.fields[bracketCol]) ? bracketInfo.fields[bracketCol] : "bracket" );
+                
+                sortedDisplayData.y = bracketInfo.y;
+                sortedDisplayData.data = new char**[sortedDisplayData.y > 0 ? sortedDisplayData.y : 1];
+                for (int i = 0; i < sortedDisplayData.y; ++i) {
+                    sortedDisplayData.data[i] = new char*[sortedDisplayData.x];
+                    sortedDisplayData.data[i][0] = CsvToolkit::duplicateString(entries[i].team_id);
+                    sortedDisplayData.data[i][1] = CsvToolkit::duplicateString(entries[i].position);
+                    sortedDisplayData.data[i][2] = CsvToolkit::duplicateString(entries[i].bracket_status);
+                }
+                
+                CsvToolkit::displayTabulatedData(sortedDisplayData);
+                CsvToolkit::deleteDataContainer2D(sortedDisplayData);
+
+                delete[] entries; // Calls ~BracketEntry() for each element
+            }
         } else {
-            std::cout << "No completed matches found." << std::endl;
+            std::cout << "No bracket position data found or error loading from " << TOURNAMENT_BRACKET_CSV << "." << std::endl;
         }
-        deleteDataContainer2D(allMatches);
-        deleteDataContainer2D(completedMatches);
-        std::cout << "\nNote: Full dynamic progression requires implementing logic in 'Update Result'." << std::endl;
-        getString("Press Enter to continue...");
+        CsvToolkit::deleteDataContainer2D(bracketInfo); // Original data
+        CsvToolkit::getString("Press Enter to continue...");
     }
     
-    void handleTeamProgression(const Match& updatedMatch, TeamStack& ubLosersStack, TeamQueue& nextRoundUBQueue, TeamQueue& nextRoundLBQueue) {
+    // (TeamQueue and TeamStack structs can be kept for future advanced progression logic,
+    // but the immediate solution will focus on tournament_bracket.csv states)
+
+    // Modified handleTeamProgression
+    void handleTeamProgression(const Match& updatedMatch) { // Removed queue/stack params for now
         std::cout << "Processing progression for Match ID: " << updatedMatch.match_id << std::endl;
-        if (!updatedMatch.winner_team_id || strlen(updatedMatch.winner_team_id) == 0) {
-            std::cout << "No winner declared. Cannot process progression." << std::endl;
+        if (!updatedMatch.winner_team_id || strlen(updatedMatch.winner_team_id) == 0 || 
+            strcmp(updatedMatch.winner_team_id, "DRAW") == 0 || // Handle draws if necessary
+            strcmp(updatedMatch.match_status, "Completed") != 0) {
+            std::cout << "No clear winner or match not completed. Progression not processed." << std::endl;
             return;
         }
 
         const char* winnerId = updatedMatch.winner_team_id;
         const char* loserId = nullptr;
-        Team winnerTeam, loserTeam; // Need to fetch full Team objects if more details are needed for queue/stack
 
-        // Identify loser and find Team objects (simplified: just IDs for now)
         if (strcmp(updatedMatch.team1_id, winnerId) == 0) {
             loserId = updatedMatch.team2_id;
-        } else {
+        } else if (strcmp(updatedMatch.team2_id, winnerId) == 0) {
             loserId = updatedMatch.team1_id;
+        } else {
+            std::cerr << "Error: Winner ID does not match either team in match " << updatedMatch.match_id << std::endl;
+            return;
         }
-        
-        // --- Update tournament_bracket.csv with new status ---
-        dataContainer2D bracketData = getData(TOURNAMENT_BRACKET_CSV);
-        bool bracketUpdated = false;
-        if (!bracketData.error) {
-            int teamIdCol = -1, bracketNameCol = -1, positionCol = -1;
-            for(int i=0; i < bracketData.x; ++i) {
-                if(strcmp(bracketData.fields[i], "team_id") == 0) teamIdCol = i;
-                else if(strcmp(bracketData.fields[i], "bracket") == 0) bracketNameCol = i;
-                else if(strcmp(bracketData.fields[i], "position") == 0) positionCol = i;
-            }
 
-            if (teamIdCol != -1 && bracketNameCol != -1 && positionCol !=-1) {
-                 for (int i = 0; i < bracketData.y; ++i) {
-                    if (bracketData.data[i][teamIdCol] && strcmp(bracketData.data[i][teamIdCol], loserId) == 0) {
-                        std::string currentBracketName = bracketData.data[i][bracketNameCol];
-                        delete[] bracketData.data[i][bracketNameCol]; // existing bracket name
-                        delete[] bracketData.data[i][positionCol]; // existing position
-
-                        if (strstr(updatedMatch.match_level, "Upper Bracket") != nullptr) {
-                            bracketData.data[i][bracketNameCol] = duplicateString("lower_bracket"); // Dropped to LB
-                            bracketData.data[i][positionCol] = duplicateString("LB-FromUB"); // New position
-                            std::cout << "Team " << loserId << " drops to Lower Bracket." << std::endl;
-                            // For actual queuing: Need to load Team object for loserId and push to ubLosersStack
-                        } else { // Was in Lower Bracket
-                            bracketData.data[i][bracketNameCol] = duplicateString("eliminated");
-                            bracketData.data[i][positionCol] = duplicateString("Eliminated");
-                            std::cout << "Team " << loserId << " is eliminated." << std::endl;
-                        }
-                        bracketUpdated = true;
-                        break; 
-                    }
+        // Helper to update team status in tournament_bracket.csv
+        auto updateTeamStatusInBracketFile = [&](const char* teamId, const char* newPosition, const char* newBracketStatus) {
+            dataContainer2D bracketData = getData(TOURNAMENT_BRACKET_CSV);
+            bool updated = false;
+            if (!bracketData.error && bracketData.y > 0) {
+                int teamIdCol = -1, posCol = -1, bracketCol = -1;
+                for(int k=0; k<bracketData.x; ++k) {
+                    if(strcmp(bracketData.fields[k], "team_id")==0) teamIdCol=k;
+                    else if(strcmp(bracketData.fields[k], "position")==0) posCol=k;
+                    else if(strcmp(bracketData.fields[k], "bracket")==0) bracketCol=k;
                 }
-                // Update winner's position (simplified, a real system would map to next match slot)
-                 for (int i = 0; i < bracketData.y; ++i) {
-                    if (bracketData.data[i][teamIdCol] && strcmp(bracketData.data[i][teamIdCol], winnerId) == 0) {
-                        delete[] bracketData.data[i][positionCol];
-                        std::string nextPos = std::string(updatedMatch.match_level) + "-Winner";
-                        bracketData.data[i][positionCol] = duplicateString(nextPos.c_str());
-                         std::cout << "Team " << winnerId << " advances." << std::endl;
-                         // For actual queuing: Need to load Team object for winnerId and enqueue to appropriate next round queue
-                        bracketUpdated = true;
-                        break;
+
+                if (teamIdCol != -1 && posCol != -1 && bracketCol != -1) {
+                    for (int i = 0; i < bracketData.y; ++i) {
+                        if (bracketData.data[i][teamIdCol] && strcmp(bracketData.data[i][teamIdCol], teamId) == 0) {
+                            delete[] bracketData.data[i][posCol];
+                            bracketData.data[i][posCol] = duplicateString(newPosition);
+                            delete[] bracketData.data[i][bracketCol];
+                            bracketData.data[i][bracketCol] = duplicateString(newBracketStatus);
+                            updated = true;
+                            break;
+                        }
                     }
-                 }
+                    if (updated) {
+                        writeData(TOURNAMENT_BRACKET_CSV, bracketData);
+                        std::cout << "Team " << teamId << " status updated in " << TOURNAMENT_BRACKET_CSV << " to position: " << newPosition << ", bracket: " << newBracketStatus << std::endl;
+                    } else {
+                        std::cout << "Warning: Team " << teamId << " not found in " << TOURNAMENT_BRACKET_CSV << " to update status." << std::endl;
+                    }
+                } else {
+                    std::cerr << "Warning: Required columns missing in " << TOURNAMENT_BRACKET_CSV << " for status update." << std::endl;
+                }
+            } else {
+                std::cerr << "Warning: Could not load or empty " << TOURNAMENT_BRACKET_CSV << " for status update." << std::endl;
             }
-            if(bracketUpdated) writeData(TOURNAMENT_BRACKET_CSV, bracketData);
+            deleteDataContainer2D(bracketData);
+        };
+
+        const char* matchLevel = updatedMatch.match_level ? updatedMatch.match_level : "";
+
+        if (strstr(matchLevel, "Upper Bracket Final") != nullptr) { 
+            updateTeamStatusInBracketFile(winnerId, "UB-Final-Winner", "upper_bracket"); // Advances to Grand Final as UB Rep
+            updateTeamStatusInBracketFile(loserId, "To LB Final", "lower_bracket"); // Drops to LB Final (or a match to decide LB rep)
         }
-        deleteDataContainer2D(bracketData);
-        
-        // TODO: Implement actual queuing/stacking of Team objects and generating next round matches
-        // This part requires loading the full Team objects for winner and loser,
-        // then pushing/enqueuing them.
-        // Example (conceptual, needs Team objects not just IDs):
-        // if (strstr(updatedMatch.match_level, "Upper Bracket")) {
-        //     nextRoundUBQueue.enqueue(winnerTeamObject);
-        //     ubLosersStack.push(loserTeamObject);
-        // } else { // Lower Bracket
-        //     nextRoundLBQueue.enqueue(winnerTeamObject); // Loser is eliminated
-        // }
-        // Then, a function would check these queues/stacks to form new matches.
-        std::cout << "Further progression logic (scheduling next matches using queues/stacks) is pending." << std::endl;
+        else if (strstr(matchLevel, "Upper Bracket Semi-Final") != nullptr) { 
+            updateTeamStatusInBracketFile(winnerId, "UB-To-Final", "upper_bracket"); // Winner advances to UB Final
+            updateTeamStatusInBracketFile(loserId, "LB-FromUB-Semi", "lower_bracket"); // Loser drops to a later LB stage
+        }
+        else if (strstr(matchLevel, "Upper Bracket R1") != nullptr) { // Initial UB round
+            updateTeamStatusInBracketFile(winnerId, "UB-R1-Winner", "upper_bracket"); 
+            updateTeamStatusInBracketFile(loserId, "LB-FromUB-R1", "lower_bracket"); 
+        }
+        else if (strstr(matchLevel, "Upper Bracket") != nullptr) { // Other generic UB rounds (less specific than above)
+            updateTeamStatusInBracketFile(winnerId, "UB-Advanced", "upper_bracket");
+            updateTeamStatusInBracketFile(loserId, "LB-FromUB-Generic", "lower_bracket"); 
+        }
+        // --- Lower Bracket Progression ---
+        else if (strstr(matchLevel, "Lower Bracket Final") != nullptr) {
+            updateTeamStatusInBracketFile(winnerId, "LB-Final-Winner", "lower_bracket"); // Advances to Grand Final as LB Rep
+            updateTeamStatusInBracketFile(loserId, "2nd Runner Up", "finished_placing"); 
+        }
+        else if (strstr(matchLevel, "Lower Bracket Semi-Final") != nullptr) { // YOUR REQUESTED CHANGE
+            updateTeamStatusInBracketFile(winnerId, "LB-Advanced-To-Final", "lower_bracket"); // Winner advances to LB Final
+            updateTeamStatusInBracketFile(loserId, "3rd Runner Up", "finished_placing");    // Loser is 3rd Runner Up
+        }
+        else if (strstr(matchLevel, "Lower Bracket R1") != nullptr) { // Initial LB round
+            updateTeamStatusInBracketFile(winnerId, "LB-R1-Winner", "lower_bracket"); 
+            updateTeamStatusInBracketFile(loserId, "Eliminated-LB-R1", "eliminated");
+        }
+        else if (strstr(matchLevel, "Lower Bracket") != nullptr) { // Other generic LB rounds (e.g., Round 2, Quarterfinals)
+            updateTeamStatusInBracketFile(winnerId, "LB-Advanced", "lower_bracket");
+            updateTeamStatusInBracketFile(loserId, "Eliminated", "eliminated"); 
+        }
+        // --- Fallback for unknown levels ---
+        else {
+               
+            updateTeamStatusInBracketFile(winnerId, "Champion", "finished_placing");
+            updateTeamStatusInBracketFile(loserId, "1st Runner Up", "finished_placing");
+        }
     }
 
 
@@ -1259,7 +1216,7 @@ char* getTimeFromUser(const char* prompt) {
 
             if (writeData(MATCH_CSV, allMatches) == 0) {
                 std::cout << "Match result updated successfully in " << MATCH_CSV << std::endl;
-                handleTeamProgression(currentMatch, ubLosersStack, nextRoundUBQueue, nextRoundLBQueue);
+                handleTeamProgression(currentMatch);
             } else {
                 std::cout << "Error writing updated match data to " << MATCH_CSV << std::endl;
             }
@@ -1269,6 +1226,348 @@ char* getTimeFromUser(const char* prompt) {
         }
         deleteDataContainer2D(allMatches);
         getString("Press Enter to continue...");
+    }
+
+    // EsportsScheduler.hpp
+// ... (inside namespace EsportsScheduler) ...
+
+// Helper to get a Team object by ID from the master list
+Team getTeamDetails(const char* teamId, Team* masterList, int masterListCount) {
+    if (teamId && masterList) {
+        for (int i = 0; i < masterListCount; ++i) {
+            if (masterList[i].team_id && strcmp(masterList[i].team_id, teamId) == 0) {
+                return masterList[i]; // Returns a copy
+            }
+        }
+    }
+    return Team(); // Return empty/default team if not found
+}
+
+    // EsportsScheduler.hpp
+// ... (inside namespace EsportsScheduler) ...
+
+Team selectTeamForProgressionMatch(const char* prompt, const dataContainer2D& bracketStates, 
+                                   const char* desiredBracketStatus,
+                                   Team* allTeamsMasterList, int totalMasterTeamCount,
+                                   const char* excludeTeamId1 = nullptr, 
+                                   const char* excludeTeamId2 = nullptr) { // excludeTeamId2 is not used in current logic but kept for signature
+    std::cout << prompt << std::endl;
+    
+    Team* eligibleTeams = new Team[bracketStates.y > 0 ? bracketStates.y : 1];
+    int eligibleCount = 0;
+
+    int teamIdCol_bs = -1, bracketCol_bs = -1, positionCol_bs = -1;
+     if (bracketStates.x > 0 && bracketStates.fields) {
+        for (int k = 0; k < bracketStates.x; ++k) {
+            if (strcmp(bracketStates.fields[k], "team_id") == 0) teamIdCol_bs = k;
+            else if (strcmp(bracketStates.fields[k], "bracket") == 0) bracketCol_bs = k;
+            else if (strcmp(bracketStates.fields[k], "position") == 0) positionCol_bs = k;
+        }
+    }
+
+    if (teamIdCol_bs == -1 || bracketCol_bs == -1 || positionCol_bs == -1) {
+        std::cerr << "Error: Required columns (team_id, bracket, position) missing in tournament_bracket.csv for team selection." << std::endl;
+        delete[] eligibleTeams;
+        return Team();
+    }
+
+    std::cout << "Eligible teams in '" << desiredBracketStatus << "':" << std::endl;
+    int displayIndex = 1;
+    for (int i = 0; i < bracketStates.y; ++i) {
+        const char* currentTeamId = bracketStates.data[i][teamIdCol_bs];
+        const char* currentBracket = bracketStates.data[i][bracketCol_bs];
+        const char* currentPosition = bracketStates.data[i][positionCol_bs];
+
+        if (currentTeamId && currentBracket && strcmp(currentBracket, desiredBracketStatus) == 0) {
+            if (currentPosition && (strstr(currentPosition, "Eliminated") != nullptr || strstr(currentPosition, "eliminated") != nullptr) ) {
+                continue;
+            }
+            if (excludeTeamId1 && strcmp(currentTeamId, excludeTeamId1) == 0) continue;
+            if (excludeTeamId2 && strcmp(currentTeamId, excludeTeamId2) == 0) continue;
+
+            Team fullTeamDetails = getTeamDetails(currentTeamId, allTeamsMasterList, totalMasterTeamCount);
+            if (fullTeamDetails.team_id) {
+                 if (eligibleCount < (bracketStates.y > 0 ? bracketStates.y : 1) ) {
+                    eligibleTeams[eligibleCount++] = fullTeamDetails;
+                    std::cout << "  " << displayIndex++ << ". " << fullTeamDetails.team_id 
+                              << " (" << (fullTeamDetails.team_name ? fullTeamDetails.team_name : "N/A") 
+                              << ") - Pos: " << (currentPosition ? currentPosition : "N/A") << std::endl;
+                }
+            }
+        }
+    }
+
+    Team selectedTeam; // Will hold the chosen team (as a copy)
+    if (eligibleCount == 0) {
+        std::cout << "No eligible teams found in '" << desiredBracketStatus << "' for selection." << std::endl;
+    } else {
+        bool validSelectionMade = false;
+        while(!validSelectionMade) {
+            char* choice_cstr = getString("Select team by number (or 0 to cancel selection): ");
+            if (choice_cstr) {
+                int choice_num = atoi(choice_cstr);
+                if (choice_num >= 1 && choice_num <= eligibleCount) {
+                    selectedTeam = eligibleTeams[choice_num - 1]; // Team assignment operator makes a deep copy
+                    validSelectionMade = true;
+                } else if (choice_num == 0) {
+                    std::cout << "Selection cancelled." << std::endl;
+                    // selectedTeam remains default/empty (team_id will be nullptr)
+                    validSelectionMade = true; // Exit loop
+                } else {
+                    std::cout << "Invalid selection. Please pick a number between 1 and " << eligibleCount << ", or 0 to cancel." << std::endl;
+                }
+                delete[] choice_cstr;
+            } else { // Should ideally not happen with getString
+                std::cout << "Input error during selection." << std::endl;
+                validSelectionMade = true; // Break loop to prevent infinite loop
+            }
+        }
+    }
+    
+    delete[] eligibleTeams; // This calls destructors for all Team objects in the array
+    return selectedTeam; 
+}
+
+
+   // This is a helper that can be called after a new match is scheduled.
+    void updateTeamPositionInBracketFile(const char* teamId, const char* newMatchId, const char* newMatchLevel, bool isTeam1) {
+        dataContainer2D bracketData = getData(TOURNAMENT_BRACKET_CSV);
+        bool updated = false;
+        if (!bracketData.error && bracketData.y > 0) {
+            int teamIdCol = -1, posCol = -1;
+            for(int k=0; k<bracketData.x; ++k) {
+                if(strcmp(bracketData.fields[k], "team_id")==0) teamIdCol=k;
+                else if(strcmp(bracketData.fields[k], "position")==0) posCol=k;
+            }
+
+            if (teamIdCol != -1 && posCol != -1) {
+                for (int i = 0; i < bracketData.y; ++i) {
+                    if (bracketData.data[i][teamIdCol] && strcmp(bracketData.data[i][teamIdCol], teamId) == 0) {
+                        delete[] bracketData.data[i][posCol];
+                        std::string positionStr = std::string(newMatchLevel) + " vs " + newMatchId + (isTeam1 ? "-P1" : "-P2");
+                        bracketData.data[i][posCol] = duplicateString(positionStr.c_str());
+                        updated = true;
+                        break;
+                    }
+                }
+                if (updated) {
+                    writeData(TOURNAMENT_BRACKET_CSV, bracketData);
+                    std::cout << "Team " << teamId << " position updated in " << TOURNAMENT_BRACKET_CSV << std::endl;
+                } else {
+                    std::cout << "Warning: Team " << teamId << " not found in " << TOURNAMENT_BRACKET_CSV << " to update position for new match." << std::endl;
+                }
+            } else {
+                std::cerr << "Warning: Required columns (team_id, position) missing in " << TOURNAMENT_BRACKET_CSV << " for position update." << std::endl;
+            }
+        } else {
+            std::cerr << "Warning: Could not load or empty " << TOURNAMENT_BRACKET_CSV << " for position update." << std::endl;
+        }
+        deleteDataContainer2D(bracketData);
+    }
+
+        Team* findTeamsByStatus(const dataContainer2D& bracketData, const char* statusNeedle, const char* statusColumnName, int& count_out, Team* allLoadedTeams, int totalLoadedTeamCount) {
+        count_out = 0;
+        if (bracketData.error || bracketData.y == 0) return nullptr;
+
+        int teamIdCol = -1, statusCol = -1;
+        for (int k = 0; k < bracketData.x; ++k) {
+            if (strcmp(bracketData.fields[k], "team_id") == 0) teamIdCol = k;
+            else if (strcmp(bracketData.fields[k], statusColumnName) == 0) statusCol = k; // "position" or "bracket"
+        }
+        if (teamIdCol == -1 || statusCol == -1) return nullptr;
+
+        Team* foundTeamsArr = new Team[bracketData.y]; // Max possible
+        int foundCount = 0;
+
+        for (int i = 0; i < bracketData.y; ++i) {
+            if (bracketData.data[i][statusCol] && strcmp(bracketData.data[i][statusCol], statusNeedle) == 0) {
+                // Find the full Team object from allLoadedTeams to get name etc.
+                for(int tdx = 0; tdx < totalLoadedTeamCount; ++tdx) {
+                    if (allLoadedTeams[tdx].team_id && strcmp(allLoadedTeams[tdx].team_id, bracketData.data[i][teamIdCol]) == 0) {
+                        if (foundCount < bracketData.y) { // Boundary check
+                            new (&foundTeamsArr[foundCount++]) Team(allLoadedTeams[tdx]); // Copy construct
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        count_out = foundCount;
+        if (foundCount == 0) {
+            delete[] foundTeamsArr;
+            return nullptr;
+        }
+        // Trim array if needed (or just return with foundCount)
+        // For simplicity, returning potentially oversized array with correct count_out
+        return foundTeamsArr;
+    }
+
+    void scheduleProgressionMatches() {
+        bool schedulingMoreOuter = true;
+
+        int totalMasterTeamCount = 0;
+        Team* allTeamsMasterList = loadTeamsFromCSV(totalMasterTeamCount);
+        if (!allTeamsMasterList || totalMasterTeamCount == 0) {
+            std::cout << "Cannot load base team data. Aborting progression scheduling." << std::endl;
+            if(allTeamsMasterList) {
+                for(int i=0; i<totalMasterTeamCount; ++i) allTeamsMasterList[i].~Team();
+                ::operator delete[](allTeamsMasterList);
+            }
+            CsvToolkit::getString("Press Enter...");
+            return;
+        }
+
+        while(schedulingMoreOuter) {
+            CsvToolkit::clearTerminal();
+            std::cout << "--- Schedule Progression Match ---" << std::endl;
+            
+            const char* menuOptions[] = {
+                "Schedule Next Upper Bracket Match",
+                "Schedule Next Lower Bracket Match",
+                "Schedule Grand Final",
+                "Done Scheduling Progression Matches"
+            };
+            int choice = CsvToolkit::displayMenu("Progression Match Type", menuOptions, 4);
+
+            if (choice == 4) { // Done
+                schedulingMoreOuter = false;
+                continue;
+            }
+
+            CsvToolkit::dataContainer2D bracketStates = CsvToolkit::getData(TOURNAMENT_BRACKET_CSV);
+            if (bracketStates.error || bracketStates.y == 0) {
+                std::cout << "Cannot load tournament bracket states from " << TOURNAMENT_BRACKET_CSV << ". Cannot proceed." << std::endl;
+                CsvToolkit::deleteDataContainer2D(bracketStates);
+                CsvToolkit::getString("Press Enter...");
+                continue; 
+            }
+
+            Team team1, team2; // To store selected teams
+            const char* desiredBracketStatusTeam1 = nullptr;
+            const char* desiredBracketStatusTeam2 = nullptr;
+            bool isGrandFinal = false;
+            char* defaultMatchLevel = nullptr; // For Grand Final
+
+            if (choice == 1) { // Schedule Next Upper Bracket Match
+                desiredBracketStatusTeam1 = "upper_bracket";
+                desiredBracketStatusTeam2 = "upper_bracket";
+                std::cout << "\n--- Scheduling Next Upper Bracket Match ---" << std::endl;
+                team1 = selectTeamForProgressionMatch("Select Team 1 for Upper Bracket match:", bracketStates, desiredBracketStatusTeam1, allTeamsMasterList, totalMasterTeamCount);
+                if (team1.team_id) {
+                    team2 = selectTeamForProgressionMatch("Select Team 2 for Upper Bracket match:", bracketStates, desiredBracketStatusTeam2, allTeamsMasterList, totalMasterTeamCount, team1.team_id);
+                }
+            } else if (choice == 2) { // Schedule Next Lower Bracket Match
+                desiredBracketStatusTeam1 = "lower_bracket";
+                desiredBracketStatusTeam2 = "lower_bracket";
+                std::cout << "\n--- Scheduling Next Lower Bracket Match ---" << std::endl;
+                team1 = selectTeamForProgressionMatch("Select Team 1 for Lower Bracket match:", bracketStates, desiredBracketStatusTeam1, allTeamsMasterList, totalMasterTeamCount);
+                if (team1.team_id) {
+                    team2 = selectTeamForProgressionMatch("Select Team 2 for Lower Bracket match:", bracketStates, desiredBracketStatusTeam2, allTeamsMasterList, totalMasterTeamCount, team1.team_id);
+                }
+            } else if (choice == 3) { // Schedule Grand Final
+                isGrandFinal = true;
+                defaultMatchLevel = CsvToolkit::duplicateString("Grand Final");
+                std::cout << "\n--- Scheduling Grand Final ---" << std::endl;
+                
+                desiredBracketStatusTeam1 = "upper_bracket"; // UB Finalist
+                std::cout << "Select the Upper Bracket Finalist:" << std::endl;
+                team1 = selectTeamForProgressionMatch("Select Upper Bracket Finalist:", bracketStates, desiredBracketStatusTeam1, allTeamsMasterList, totalMasterTeamCount);
+                
+                if (team1.team_id) {
+                    desiredBracketStatusTeam2 = "lower_bracket"; // LB Finalist
+                    std::cout << "\nSelect the Lower Bracket Finalist:" << std::endl;
+                    // Pass team1.team_id as excludeTeamId1, though not strictly necessary if brackets are distinct
+                    // and selectTeamForProgressionMatch filters by desiredBracketStatus.
+                    team2 = selectTeamForProgressionMatch("Select Lower Bracket Finalist:", bracketStates, desiredBracketStatusTeam2, allTeamsMasterList, totalMasterTeamCount, team1.team_id);
+                }
+                
+                if (!team1.team_id || !team2.team_id) {
+                    std::cout << "Could not select both finalists for the Grand Final." << std::endl;
+                } else {
+                    std::cout << "Grand Finalists proposed:" << std::endl;
+                    std::cout << "  From Upper Bracket: " << team1.team_id << " (" << (team1.team_name ? team1.team_name : "N/A") << ")" << std::endl;
+                    std::cout << "  From Lower Bracket: " << team2.team_id << " (" << (team2.team_name ? team2.team_name : "N/A") << ")" << std::endl;
+                }
+            }
+            
+            CsvToolkit::deleteDataContainer2D(bracketStates); // Done with reading bracketStates for this selection phase
+
+            if (team1.team_id && team2.team_id) { // Both teams selected/identified
+                std::cout << "\nConfirming details for match between:" << std::endl;
+                std::cout << "Team 1: " << (team1.team_id ? team1.team_id : "N/A") << " (" << (team1.team_name ? team1.team_name : "N/A") << ")" << std::endl;
+                std::cout << "Team 2: " << (team2.team_id ? team2.team_id : "N/A") << " (" << (team2.team_name ? team2.team_name : "N/A") << ")" << std::endl;
+
+                char* date_str = getDateFromUser("Enter Scheduled Date (YYYY-MM-DD): ");
+                char* time_str = getTimeFromUser("Enter Scheduled Time (HH:MM): ");
+                char* level_str_input;
+
+                if (isGrandFinal) {
+                    level_str_input = CsvToolkit::duplicateString(defaultMatchLevel ? defaultMatchLevel : "Grand Final"); // Use earlier duplicated string or default
+                } else {
+                    level_str_input = CsvToolkit::getString("Enter Match Level/Description (e.g., UB Semifinal, LB Round 3): ");
+                }
+
+                char matchIdBuffer[20];
+                sprintf(matchIdBuffer, "MATCH%03d", getNextMatchCounterFileBased());
+                Match newMatch(matchIdBuffer, date_str, time_str, team1.team_id, team2.team_id, "Scheduled", level_str_input);
+
+                CsvToolkit::clearTerminal();
+                std::cout << "--- Proposed New Match ---" << std::endl;
+                std::cout << "Match ID: " << newMatch.match_id << std::endl;
+                std::cout << "Level: " << newMatch.match_level << std::endl;
+                std::cout << "Team 1: " << newMatch.team1_id << " (" << (team1.team_name ? team1.team_name : "N/A") << ")" << std::endl;
+                std::cout << "Team 2: " << newMatch.team2_id << " (" << (team2.team_name ? team2.team_name : "N/A") << ")" << std::endl;
+                std::cout << "Date: " << newMatch.scheduled_date << std::endl;
+                std::cout << "Time: " << newMatch.scheduled_time << std::endl;
+
+                char* confirmSave_cstr = CsvToolkit::getString("Save this match? (yes/no): ");
+                std::string confirmSave_str(confirmSave_cstr ? confirmSave_cstr : "");
+                delete[] confirmSave_cstr;
+
+                if (confirmSave_str == "yes" || confirmSave_str == "y") {
+                    writeMatchToCSV(newMatch);
+                    // Update team positions in tournament_bracket.csv
+                    // The updateTeamPositionInBracketFile should use the team's current bracket (upper/lower)
+                    // and then set a new position string.
+                    // For Grand Final, both teams are now "In Grand Final".
+                    const char* team1_current_bracket = choice == 1 || (isGrandFinal && desiredBracketStatusTeam1 == "upper_bracket") ? "upper_bracket" : "lower_bracket";
+                    const char* team2_current_bracket = choice == 2 || (isGrandFinal && desiredBracketStatusTeam2 == "lower_bracket") ? "lower_bracket" : "upper_bracket";
+                    if (isGrandFinal) { // For GF, both effectively move to a "Finals" stage/position
+                        team1_current_bracket = "finals_contender"; // Or some other descriptive bracket status
+                        team2_current_bracket = "finals_contender";
+                    }
+
+                    updateTeamPositionInBracketFile(team1.team_id, newMatch.match_id, newMatch.match_level, true);
+                    updateTeamPositionInBracketFile(team2.team_id, newMatch.match_id, newMatch.match_level, false);
+                    // The updateTeamPositionInBracketFile might also need to update the 'bracket' column if it changes (e.g. for Grand Finalists)
+                    std::cout << "Match " << newMatch.match_id << " saved." << std::endl;
+                } else {
+                    std::cout << "Match not saved." << std::endl;
+                }
+                delete[] date_str; 
+                delete[] time_str; 
+                delete[] level_str_input;
+            } else if (choice != 4) { 
+                std::cout << "Could not set up the match. One or both teams were not selected/identified." << std::endl;
+            }
+            
+            delete[] defaultMatchLevel; // Was duplicated if GrandFinal, safe to delete if nullptr
+            defaultMatchLevel = nullptr; 
+
+            // Destructors for local Team copies team1 and team2 are called automatically when they go out of scope
+            
+            if (choice != 4) { // If not "Done"
+                CsvToolkit::getString("Press Enter to continue scheduling or choose 'Done' from the menu...");
+            }
+
+        } // end while(schedulingMoreOuter)
+
+        if (allTeamsMasterList) {
+            for(int i=0; i<totalMasterTeamCount; ++i) allTeamsMasterList[i].~Team();
+            ::operator delete[](allTeamsMasterList);
+        }
+        std::cout << "Exited progression match scheduling." << std::endl;
+        CsvToolkit::getString("Press Enter to return to main scheduling menu...");
     }
 
     void manageMatchSchedulingAndProgression() {
@@ -1282,8 +1581,15 @@ char* getTimeFromUser(const char* prompt) {
         bool running = true;
         while (running) {
             clearTerminal();
-            const char* menuOptions[] = {"View Tournament", "Generate Initial Schedule", "Update Match Result", "Return to Main Menu"};
-            int choice = displayMenu("Match Scheduling & Player Progression", menuOptions, 4);
+            const char* menuOptions[] = {
+                "View Tournament",
+                "Generate Initial Schedule",
+                "Update Match Result",
+                "Schedule Progression Matches", // New Option
+                "Return to Main Menu"
+            };
+            int choice = displayMenu("Match Scheduling & Player Progression", menuOptions, 5); // Now 5 options
+
             switch (choice) {
                 case 1: {
                     bool viewRunning = true;
@@ -1303,7 +1609,8 @@ char* getTimeFromUser(const char* prompt) {
                 }
                 case 2: generateInitialSchedule(); break;
                 case 3: updateMatchResult(ubLosersStack, nextRoundUBQueue, nextRoundLBQueue); break;
-                case 4: running = false; break;
+                case 4: scheduleProgressionMatches(); break;
+                case 5: running = false; break;
                 default: displaySystemMessage("Invalid choice.", 2); break;
             }
         }
