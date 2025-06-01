@@ -10,13 +10,13 @@ using namespace CsvToolkit;
 namespace EsportsAnalytics {
 
     // helper: deep-copy a null-terminated c-string
-    inline char* duplicateString(const char* src) {
-        if (!src) return nullptr;
-        size_t len = std::strlen(src);
-        char* dst = new char[len + 1];
-        std::strcpy(dst, src);
-        return dst;
-    }
+    // inline char* duplicateString(const char* src) {
+    //     if (!src) return nullptr;
+    //     size_t len = std::strlen(src);
+    //     char* dst = new char[len + 1];
+    //     std::strcpy(dst, src);
+    //     return dst;
+    // }
 
     // struct to hold one line from match.csv
     // fields correspond to each column:

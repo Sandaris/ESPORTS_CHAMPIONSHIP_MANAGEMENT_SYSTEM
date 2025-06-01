@@ -270,100 +270,118 @@ namespace EsportsScheduler {
     };
 
     struct BracketEntry {
-    char* team_id;
-    char* position;
-    char* bracket_status; // Renamed from 'bracket' to avoid conflict with bracket keyword
-    int sort_priority;
+        char* team_id;
+        char* position;
+        char* bracket_status;
+        int sort_priority;
 
-    // Constructor
-    BracketEntry(const char* tid = nullptr, const char* pos = nullptr, const char* br_status = nullptr) 
-        : sort_priority(9999) { // Default to a high number (low priority)
-        team_id = CsvToolkit::duplicateString(tid);
-        position = CsvToolkit::duplicateString(pos);
-        bracket_status = CsvToolkit::duplicateString(br_status);
-        setSortPriority();
-    }
-    
-    // Constructor from CSV row data
-    BracketEntry(char** rowData, int numCols, int teamIdColIdx, int posColIdx, int bracketColIdx)
-        : sort_priority(9999) { // Default to a high number (low priority)
-        team_id = (teamIdColIdx != -1 && rowData[teamIdColIdx]) ? CsvToolkit::duplicateString(rowData[teamIdColIdx]) : CsvToolkit::duplicateString("");
-        position = (posColIdx != -1 && rowData[posColIdx]) ? CsvToolkit::duplicateString(rowData[posColIdx]) : CsvToolkit::duplicateString("");
-        bracket_status = (bracketColIdx != -1 && rowData[bracketColIdx]) ? CsvToolkit::duplicateString(rowData[bracketColIdx]) : CsvToolkit::duplicateString("");
-        setSortPriority();
-    }
+        BracketEntry(const char* tid = nullptr, const char* pos = nullptr, const char* br_status = nullptr) 
+            : sort_priority(999) { // Default for unknown statuses, will appear last
+            team_id = CsvToolkit::duplicateString(tid);
+            position = CsvToolkit::duplicateString(pos);
+            bracket_status = CsvToolkit::duplicateString(br_status);
+            setSortPriority();
+        }
+        
+        BracketEntry(char** rowData, int numCols, int teamIdColIdx, int posColIdx, int bracketColIdx)
+            : sort_priority(999) {
+            team_id = (teamIdColIdx != -1 && rowData[teamIdColIdx]) ? CsvToolkit::duplicateString(rowData[teamIdColIdx]) : CsvToolkit::duplicateString("");
+            position = (posColIdx != -1 && rowData[posColIdx]) ? CsvToolkit::duplicateString(rowData[posColIdx]) : CsvToolkit::duplicateString("");
+            bracket_status = (bracketColIdx != -1 && rowData[bracketColIdx]) ? CsvToolkit::duplicateString(rowData[bracketColIdx]) : CsvToolkit::duplicateString("");
+            setSortPriority();
+        }
 
+        void setSortPriority() {
+            sort_priority = 999; // Default: last
 
-    void setSortPriority() {
-        if (position) {
-            if (strcmp(position, "Champion") == 0) sort_priority = 1;
-            else if (strcmp(position, "1st Runner Up") == 0) sort_priority = 2;
-            else if (strcmp(position, "2nd Runner Up") == 0) sort_priority = 3; // Assuming this status exists
-            else if (strcmp(position, "3rd Runner Up") == 0) sort_priority = 4;
-            else if (strcmp(position, "Eliminated-LB-R1") == 0) sort_priority = 100; // Specific eliminated
-            else if (strcmp(position, "Eliminated") == 0) sort_priority = 110;       // Generic eliminated
-            else if (strstr(position, "Eliminated") != nullptr) sort_priority = 120; // Broader eliminated catch
-            // Active teams (lower sort priority - appear after placed/eliminated)
-            else if (strstr(position, "Winner") != nullptr || strstr(position, "Advanced") != nullptr || 
-                     strstr(position, "FromUB") != nullptr || strstr(position, "To-Final") != nullptr ||
-                     strstr(position, "In Match") != nullptr || strstr(position, "Slot") != nullptr || /* For positions like UB-R1-M1-S1 */
-                     strstr(position, "UB-") != nullptr || strstr(position, "LB-") != nullptr ) { /* Generic active */
-                 sort_priority = 500;
-            } else {
-                 sort_priority = 600; // Other unknown active statuses
+            if (bracket_status) {
+                if (strcmp(bracket_status, "upper_bracket") == 0) {
+                    sort_priority = 10; // Active UB teams
+                    // Sub-prioritize within UB if needed, e.g., based on position string
+                    if (position && strstr(position, "Winner") != nullptr) sort_priority += 1; // e.g. UB-R1-Winner
+                    else if (position && strstr(position, "Finalist") != nullptr) sort_priority += 0; // e.g. UB-Final-Winner comes first
+                    else if (position && strstr(position, "Advanced") != nullptr) sort_priority += 2;
+                    else if (position && (strstr(position, "Slot") != nullptr || strstr(position, "-M") !=nullptr )) sort_priority +=3; // in a specific match
+                    else sort_priority +=5; // Generic UB status
+
+                } else if (strcmp(bracket_status, "lower_bracket") == 0) {
+                    sort_priority = 20; // Active LB teams
+                    if (position && strstr(position, "Winner") != nullptr) sort_priority += 1;
+                    else if (position && strstr(position, "Finalist") != nullptr) sort_priority += 0; 
+                    else if (position && strstr(position, "Advanced") != nullptr) sort_priority += 2;
+                    else if (position && strstr(position, "FromUB") != nullptr) sort_priority += 3; // Recently dropped
+                    else if (position && (strstr(position, "Slot") != nullptr || strstr(position, "-M") !=nullptr )) sort_priority +=4;
+                    else sort_priority +=5;
+
+                } else if (strcmp(bracket_status, "finished_placing") == 0) {
+                    sort_priority = 30; // Base for placed teams
+                    if (position) {
+                        if (strcmp(position, "Champion") == 0) sort_priority = 31; // Champion highest among placed
+                        else if (strcmp(position, "1st Runner Up") == 0) sort_priority = 32;
+                        else if (strcmp(position, "2nd Runner Up") == 0) sort_priority = 33;
+                        else if (strcmp(position, "3rd Runner Up") == 0) sort_priority = 34;
+                        else sort_priority = 39; // Other placings
+                    }
+                } else if (strcmp(bracket_status, "eliminated") == 0) {
+                    sort_priority = 100; // Base for eliminated teams
+                    if (position) { // Sub-sort eliminated types
+                        if (strcmp(position, "Eliminated-LB-R1") == 0) sort_priority = 101;
+                        else if (strcmp(position, "Eliminated") == 0) sort_priority = 102; // Generic
+                        else sort_priority = 105; // Other eliminated types
+                    }
+                } else if (strcmp(bracket_status, "disqualified") == 0) {
+                    sort_priority = 200;
+                }
             }
         }
-        // Further refine by bracket_status if needed
-        if (bracket_status) {
-            if (strcmp(bracket_status, "eliminated") == 0 && sort_priority > 120) sort_priority = 115; // ensure eliminated is grouped
-            if (strcmp(bracket_status, "finished_placing") == 0 && sort_priority > 4 && sort_priority < 100) {
-                // This implies a placing that wasn't Champion, 1st, 2nd, 3rd.
-                // For now, position string is the primary key for placings.
-            }
+
+        // Copy Constructor
+        BracketEntry(const BracketEntry& other) {
+            team_id = CsvToolkit::duplicateString(other.team_id);
+            position = CsvToolkit::duplicateString(other.position);
+            bracket_status = CsvToolkit::duplicateString(other.bracket_status);
+            sort_priority = other.sort_priority;
         }
-    }
 
+        // Assignment Operator
+        BracketEntry& operator=(const BracketEntry& other) {
+            if (this == &other) return *this;
+            delete[] team_id; delete[] position; delete[] bracket_status;
+            team_id = CsvToolkit::duplicateString(other.team_id);
+            position = CsvToolkit::duplicateString(other.position);
+            bracket_status = CsvToolkit::duplicateString(other.bracket_status);
+            sort_priority = other.sort_priority;
+            return *this;
+        }
+        
+        ~BracketEntry() {
+            delete[] team_id;
+            delete[] position;
+            delete[] bracket_status;
+        }
+    };
 
-    // Copy Constructor
-    BracketEntry(const BracketEntry& other) {
-        team_id = CsvToolkit::duplicateString(other.team_id);
-        position = CsvToolkit::duplicateString(other.position);
-        bracket_status = CsvToolkit::duplicateString(other.bracket_status);
-        sort_priority = other.sort_priority;
-    }
+    bool compareBracketEntries(const BracketEntry& a, const BracketEntry& b) {
+        if (a.sort_priority != b.sort_priority) {
+            return a.sort_priority < b.sort_priority; // Lower sort_priority value means higher in the list
+        }
+        // Secondary sort: by position string alphabetically if priorities are the same
+        if (a.position && b.position) {
+            int pos_cmp = strcmp(a.position, b.position);
+            if (pos_cmp != 0) return pos_cmp < 0;
+        } else if (a.position) return true; // a not null, b null
+        else if (b.position) return false; // b not null, a null
 
-    // Assignment Operator
-    BracketEntry& operator=(const BracketEntry& other) {
-        if (this == &other) return *this;
-        delete[] team_id; delete[] position; delete[] bracket_status;
-        team_id = CsvToolkit::duplicateString(other.team_id);
-        position = CsvToolkit::duplicateString(other.position);
-        bracket_status = CsvToolkit::duplicateString(other.bracket_status);
-        sort_priority = other.sort_priority;
-        return *this;
-    }
-    
-    ~BracketEntry() {
-        delete[] team_id;
-        delete[] position;
-        delete[] bracket_status;
-    }
-};
-
-bool compareBracketEntries(const BracketEntry& a, const BracketEntry& b) {
-    if (a.sort_priority != b.sort_priority) {
-        return a.sort_priority < b.sort_priority;
-    }
-    // Secondary sort: by team_id alphabetically if priorities are the same
-    if (a.team_id && b.team_id) {
-         return strcmp(a.team_id, b.team_id) < 0;
-    } else if (a.team_id) { // a is not null, b is null
-        return true;
-    } else if (b.team_id) { // b is not null, a is null
+        // Tertiary sort: by team_id alphabetically if priorities and positions are same (or one position is null)
+        if (a.team_id && b.team_id) {
+            return strcmp(a.team_id, b.team_id) < 0;
+        } else if (a.team_id) {
+            return true;
+        } else if (b.team_id) {
+            return false;
+        }
         return false;
     }
-    return false; // Both null or equal
-}
 
 
     int getNextMatchCounterFileBased() {
@@ -972,14 +990,13 @@ char* getTimeFromUser(const char* prompt) {
 
     void displayBracketProgress() {
         CsvToolkit::clearTerminal();
-        std::cout << "--- Bracket Progress (Sorted by Placing) ---" << std::endl;
+        std::cout << "--- Bracket Progress (Sorted by Bracket/Placing) ---" << std::endl; // Updated title
         
         CsvToolkit::dataContainer2D bracketInfo = CsvToolkit::getData(TOURNAMENT_BRACKET_CSV);
 
         if (!bracketInfo.error && bracketInfo.y > 0) {
             int teamIdCol = -1, posCol = -1, bracketCol = -1;
-            // Ensure we find the columns based on actual headers from bracketInfo.fields
-            if(bracketInfo.fields && bracketInfo.x >=3) { // Assuming at least 3 columns
+            if(bracketInfo.fields && bracketInfo.x > 0) { 
                 for (int k = 0; k < bracketInfo.x; ++k) {
                     if (strcmp(bracketInfo.fields[k], "team_id") == 0) teamIdCol = k;
                     else if (strcmp(bracketInfo.fields[k], "position") == 0) posCol = k;
@@ -999,15 +1016,12 @@ char* getTimeFromUser(const char* prompt) {
 
                 std::sort(entries, entries + bracketInfo.y, compareBracketEntries);
 
-                // Create a new dataContainer2D for display, using the original headers' order if possible,
-                // or a fixed order of the 3 main columns.
                 CsvToolkit::dataContainer2D sortedDisplayData;
-                sortedDisplayData.x = 3; // Displaying team_id, position, bracket
+                sortedDisplayData.x = 3; // We will display these 3 columns
                 sortedDisplayData.fields = new char*[sortedDisplayData.x];
-                // Use original field names if found, otherwise default
-                sortedDisplayData.fields[0] = CsvToolkit::duplicateString( (teamIdCol != -1 && bracketInfo.fields[teamIdCol]) ? bracketInfo.fields[teamIdCol] : "team_id" );
-                sortedDisplayData.fields[1] = CsvToolkit::duplicateString( (posCol != -1 && bracketInfo.fields[posCol]) ? bracketInfo.fields[posCol] : "position" );
-                sortedDisplayData.fields[2] = CsvToolkit::duplicateString( (bracketCol != -1 && bracketInfo.fields[bracketCol]) ? bracketInfo.fields[bracketCol] : "bracket" );
+                sortedDisplayData.fields[0] = CsvToolkit::duplicateString("team_id");
+                sortedDisplayData.fields[1] = CsvToolkit::duplicateString("position");
+                sortedDisplayData.fields[2] = CsvToolkit::duplicateString("bracket");
                 
                 sortedDisplayData.y = bracketInfo.y;
                 sortedDisplayData.data = new char**[sortedDisplayData.y > 0 ? sortedDisplayData.y : 1];
@@ -1021,12 +1035,12 @@ char* getTimeFromUser(const char* prompt) {
                 CsvToolkit::displayTabulatedData(sortedDisplayData);
                 CsvToolkit::deleteDataContainer2D(sortedDisplayData);
 
-                delete[] entries; // Calls ~BracketEntry() for each element
+                delete[] entries; 
             }
         } else {
             std::cout << "No bracket position data found or error loading from " << TOURNAMENT_BRACKET_CSV << "." << std::endl;
         }
-        CsvToolkit::deleteDataContainer2D(bracketInfo); // Original data
+        CsvToolkit::deleteDataContainer2D(bracketInfo);
         CsvToolkit::getString("Press Enter to continue...");
     }
     
