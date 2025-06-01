@@ -257,64 +257,163 @@ namespace EsportsAnalytics {
     void logNewMatchOutcome() {
         clearTerminal();
         std::cout << "--- Log New Match Outcome ---" << std::endl;
+        std::cout << "Enter 'q' at any text prompt to return to the previous menu." << std::endl << std::endl;
 
-        char* mo_match_id = getString("Match ID (e.g., MATCH000X): ");
-        char* mo_tournament_id = getString("Tournament ID (e.g., APUEC2025): ");
-        char* mo_stage_id = getString("Stage ID (e.g., STAGE01): ");
-        char* mo_round = getString("Match Round Number: ");
-        char* mo_scheduled_dt = getString("Scheduled Datetime (YYYY-MM-DD HH:MM): ");
-        char* mo_actual_start_dt = getString("Actual Start (YYYY-MM-DD HH:MM, blank if N/A): ");
-        char* mo_actual_end_dt = getString("Actual End (YYYY-MM-DD HH:MM, blank if N/A): ");
-        char* mo_p1_id = getString("Player 1 ID: ");
-        char* mo_p2_id = getString("Player 2 ID: ");
+        // Initialize all char pointers to nullptr for safe cleanup
+        char* mo_match_id = nullptr;
+        char* mo_tournament_id = nullptr;
+        char* mo_stage_id = nullptr;
+        char* mo_round = nullptr;
+        char* mo_scheduled_dt = nullptr;
+        char* mo_actual_start_dt = nullptr;
+        char* mo_actual_end_dt = nullptr;
+        char* mo_p1_id = nullptr;
+        char* mo_p2_id = nullptr;
+        char* mo_winner_id = nullptr;
+        char* mo_status = nullptr;
+        char* mo_bracket_info = nullptr;
+
+        // Helper lambda for repetitive cleanup (optional, but reduces redundancy)
+        // This is a C++11 feature. If using an older standard, you'd repeat the deletes.
+        auto cleanup_and_return = [&]() {
+            delete[] mo_match_id; delete[] mo_tournament_id; delete[] mo_stage_id; delete[] mo_round;
+            delete[] mo_scheduled_dt; delete[] mo_actual_start_dt; delete[] mo_actual_end_dt;
+            delete[] mo_p1_id; delete[] mo_p2_id; delete[] mo_winner_id; delete[] mo_status; delete[] mo_bracket_info;
+            std::cout << "\nInput cancelled. Returning to previous menu..." << std::endl;
+            getString("Press Enter to continue..."); // To pause before clearing and returning
+        };
+
+        mo_match_id = getString("Match ID (e.g., MATCH000X): ");
+        if (mo_match_id && strcmp(mo_match_id, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_tournament_id = getString("Tournament ID (e.g., APUEC2025): ");
+        if (mo_tournament_id && strcmp(mo_tournament_id, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_stage_id = getString("Stage ID (e.g., STAGE01): ");
+        if (mo_stage_id && strcmp(mo_stage_id, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_round = getString("Match Round Number: ");
+        if (mo_round && strcmp(mo_round, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_scheduled_dt = getString("Scheduled Datetime (YYYY-MM-DD HH:MM): ");
+        if (mo_scheduled_dt && strcmp(mo_scheduled_dt, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_actual_start_dt = getString("Actual Start (YYYY-MM-DD HH:MM, blank if N/A): ");
+        if (mo_actual_start_dt && strcmp(mo_actual_start_dt, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_actual_end_dt = getString("Actual End (YYYY-MM-DD HH:MM, blank if N/A): ");
+        if (mo_actual_end_dt && strcmp(mo_actual_end_dt, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_p1_id = getString("Player 1 ID: ");
+        if (mo_p1_id && strcmp(mo_p1_id, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_p2_id = getString("Player 2 ID: ");
+        if (mo_p2_id && strcmp(mo_p2_id, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        // For getInt, you'd need to modify getInt to handle 'q' or have a way to input 'q'
+        // that getString would pick up if getInt was wrapper.
+        // For simplicity, 'q' to go back is not implemented for getInt here.
+        // If getInt needs to support 'q', it should be modified to return a special value
+        // or set a flag that you can check here.
         int mo_p1_score = getInt("Player 1 Score: ");
         int mo_p2_score = getInt("Player 2 Score: ");
-        char* mo_winner_id = getString("Winner Player ID (or DRAW/TBD): ");
-        char* mo_status = getString("Match Status (Completed/Scheduled/Ongoing): ");
-        char* mo_bracket_info = getString("Bracket Position Info: ");
 
+        mo_winner_id = getString("Winner Player ID (or DRAW/TBD): ");
+        if (mo_winner_id && strcmp(mo_winner_id, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_status = getString("Match Status (Completed/Scheduled/Ongoing): ");
+        if (mo_status && strcmp(mo_status, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        mo_bracket_info = getString("Bracket Position Info: ");
+        if (mo_bracket_info && strcmp(mo_bracket_info, "q") == 0) {
+            cleanup_and_return();
+            return;
+        }
+
+        // If we've reached here, all inputs were successful (not 'q')
         MatchOutcome newOutcome(mo_match_id, mo_tournament_id, mo_stage_id, mo_round, mo_scheduled_dt,
                                 mo_actual_start_dt, mo_actual_end_dt, mo_p1_id, mo_p2_id,
                                 mo_winner_id, mo_p1_score, mo_p2_score, mo_status, mo_bracket_info);
-        recentMatchOutcomes.enqueue(newOutcome);
+        recentMatchOutcomes.enqueue(newOutcome); // Assuming recentMatchOutcomes is a globally accessible or member queue
 
         const int NUM_MATCH_CSV_FIELDS = 14;
-        const char* matchCsvRow[NUM_MATCH_CSV_FIELDS]; // C-style array on stack
-        std::string p1s_str_temp, p2s_str_temp;
+        const char* matchCsvRow[NUM_MATCH_CSV_FIELDS];
+        std::string p1s_str_temp, p2s_str_temp; // These should be used by getAsCsvRow to convert int scores
         newOutcome.getAsCsvRow(matchCsvRow, NUM_MATCH_CSV_FIELDS, p1s_str_temp, p2s_str_temp);
         
         const char* matchHeaders[] = {"match_id","tournament_id","stage_id","match_round_number","scheduled_datetime","actual_start_datetime","actual_end_datetime","player1_id","player2_id","winner_player_id","player1_score","player2_score","match_status","bracket_position_info"};
-        ensureCsvHeader(MATCHES_CSV, matchHeaders, NUM_MATCH_CSV_FIELDS);
+        ensureCsvHeader(MATCHES_CSV, matchHeaders, NUM_MATCH_CSV_FIELDS); // MATCHES_CSV needs to be defined
         if (writeNewDataRow(MATCHES_CSV, NUM_MATCH_CSV_FIELDS, matchCsvRow) == 0) {
             std::cout << "Match outcome logged to " << MATCHES_CSV << std::endl;
-        } else { std::cout << "Error logging match outcome to " << MATCHES_CSV << std::endl; }
-
+        } else {
+            std::cout << "Error logging match outcome to " << MATCHES_CSV << std::endl;
+        }
 
         // Log Player Stats if match is not just "Scheduled"
         if (mo_status && strcmp(mo_status, "Scheduled") != 0) {
-            if (mo_p1_id && strlen(mo_p1_id) > 0) {
-                PlayerMatchStat p1_stats = getPlayerStatsFromInput(mo_match_id, mo_p1_id);
+            // Assuming getPlayerStatsFromInput also needs similar 'q' handling or is atomic
+            if (mo_p1_id && strlen(mo_p1_id) > 0 && strcmp(mo_p1_id, "q") != 0) { // Ensure p1_id wasn't 'q'
+                PlayerMatchStat p1_stats = getPlayerStatsFromInput(mo_match_id, mo_p1_id); // This function might need 'q' checking too
+                // Check if p1_stats indicates a 'q' input if getPlayerStatsFromInput supports it
+                // For now, assuming it proceeds if no 'q' was entered for IDs
+
                 const int NUM_PLAYER_STATS_FIELDS = 12;
-                const char* p1StatCsvRow[NUM_PLAYER_STATS_FIELDS]; // C-style array on stack
-                std::string sK_temp,sD_temp,sA_temp,sP_temp;
+                const char* p1StatCsvRow[NUM_PLAYER_STATS_FIELDS]; 
+                std::string sK_temp,sD_temp,sA_temp,sP_temp; // for converting int stats to string for CSV
                 p1_stats.getAsCsvRow(p1StatCsvRow, NUM_PLAYER_STATS_FIELDS,sK_temp,sD_temp,sA_temp,sP_temp);
                 const char* playerStatsHeaders[] = {"stat_id","match_id","player_id","kills","deaths","assists","points_scored","game_specific_stat_name_1","game_specific_stat_value_1","game_specific_stat_name_2","game_specific_stat_value_2","match_highlights_notes"};
-                ensureCsvHeader(PLAYER_STATS_CSV, playerStatsHeaders, NUM_PLAYER_STATS_FIELDS); // Ensure headers for player_stats.csv
+                ensureCsvHeader(PLAYER_STATS_CSV, playerStatsHeaders, NUM_PLAYER_STATS_FIELDS); // PLAYER_STATS_CSV needs to be defined
                 writeNewDataRow(PLAYER_STATS_CSV, NUM_PLAYER_STATS_FIELDS, p1StatCsvRow);
                 std::cout << "Stats for Player " << mo_p1_id << " logged." << std::endl;
             }
-            if (mo_p2_id && strlen(mo_p2_id) > 0) {
+            if (mo_p2_id && strlen(mo_p2_id) > 0 && strcmp(mo_p2_id, "q") != 0) { // Ensure p2_id wasn't 'q'
                 PlayerMatchStat p2_stats = getPlayerStatsFromInput(mo_match_id, mo_p2_id);
+                // Check if p2_stats indicates a 'q' input
+
                 const int NUM_PLAYER_STATS_FIELDS = 12;
-                const char* p2StatCsvRow[NUM_PLAYER_STATS_FIELDS]; // C-style array on stack
+                const char* p2StatCsvRow[NUM_PLAYER_STATS_FIELDS]; 
                 std::string sK_temp,sD_temp,sA_temp,sP_temp;
                 p2_stats.getAsCsvRow(p2StatCsvRow, NUM_PLAYER_STATS_FIELDS,sK_temp,sD_temp,sA_temp,sP_temp);
-                // Header check would have happened with p1_stats if it was the first entry
+                // Header check likely done by p1's stats logging
                 writeNewDataRow(PLAYER_STATS_CSV, NUM_PLAYER_STATS_FIELDS, p2StatCsvRow);
                 std::cout << "Stats for Player " << mo_p2_id << " logged." << std::endl;
             }
         }
         
+        // Final cleanup for the successful case
         delete[] mo_match_id; delete[] mo_tournament_id; delete[] mo_stage_id; delete[] mo_round;
         delete[] mo_scheduled_dt; delete[] mo_actual_start_dt; delete[] mo_actual_end_dt;
         delete[] mo_p1_id; delete[] mo_p2_id; delete[] mo_winner_id; delete[] mo_status; delete[] mo_bracket_info;

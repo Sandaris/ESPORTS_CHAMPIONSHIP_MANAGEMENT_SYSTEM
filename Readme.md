@@ -1,7 +1,10 @@
 # Data
 
-- player : player_id,player_name,university_name,email,country_of_origin,current_ranking_points,initial_registration_date
- 
+- player.csv
+- match.csv
+- 
+
+
 # CSV Toolkit Library Function Reference
 
 ## Data Structures
