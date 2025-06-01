@@ -516,65 +516,79 @@ namespace EsportsScheduler {
             return;
         }
 
-        dataContainer2D matchData = getData(matchCsvFile);
+        // Initialize all team points to 0 before processing,
+        // so teams not in matches or if matches file is bad, they have 0 points from this calculation.
+        for (int i = 0; i < teamCount; ++i) {
+            if (teams[i].team_id) { // Check if team_id is not null before trying to access ranking_point
+                teams[i].ranking_point = 0;
+            } else {
+                // Handle null team_id if necessary, maybe skip or log error
+            }
+        }
+
+        dataContainer2D matchData = getData(matchCsvFile); // From CsvToolkit
         if (matchData.error) {
-            std::cerr << "Warning: Error loading match data from " << matchCsvFile << " for ranking calculation." << std::endl;
-            deleteDataContainer2D(matchData);
-            for (int i = 0; i < teamCount; ++i) teams[i].ranking_point = 0; // Default to 0
+            std::cerr << "Warning: Error loading match data from " << matchCsvFile << " for ranking calculation. Points remain 0." << std::endl;
+            deleteDataContainer2D(matchData); // From CsvToolkit
+            // Points already defaulted to 0 or their previous values if not reset above
             return;
         }
         if (matchData.y == 0) {
-            std::cout << "Info: No match data found in " << matchCsvFile << ". Calculated points will be 0." << std::endl;
-            for (int i = 0; i < teamCount; ++i) teams[i].ranking_point = 0;
-            deleteDataContainer2D(matchData);
+            std::cout << "Info: No match data found in " << matchCsvFile << ". Calculated points will be 0 for new calculations." << std::endl;
+            // Points already defaulted to 0
+            deleteDataContainer2D(matchData); // From CsvToolkit
             return;
         }
 
         int m_team1IdCol = -1, m_team2IdCol = -1, m_team1ScoreCol = -1, m_team2ScoreCol = -1, m_statusCol = -1;
+        // These field names "team1_id", "team2_id" etc. MUST match the headers in your matches.csv
         for (int k = 0; k < matchData.x; ++k) {
-            if (strcmp(matchData.fields[k], "team1_id") == 0) m_team1IdCol = k;
-            else if (strcmp(matchData.fields[k], "team2_id") == 0) m_team2IdCol = k;
-            else if (strcmp(matchData.fields[k], "team1_score") == 0) m_team1ScoreCol = k;
-            else if (strcmp(matchData.fields[k], "team2_score") == 0) m_team2ScoreCol = k;
-            else if (strcmp(matchData.fields[k], "match_status") == 0) m_statusCol = k;
+            if (strcmp(matchData.fields[k], "team1_id") == 0) m_team1IdCol = k; // Or "Player1ID", "Team1ID" from your actual matches.csv
+            else if (strcmp(matchData.fields[k], "team2_id") == 0) m_team2IdCol = k; // Or "Player2ID", "Team2ID"
+            else if (strcmp(matchData.fields[k], "team1_score") == 0) m_team1ScoreCol = k; // Or "Player1Score"
+            else if (strcmp(matchData.fields[k], "team2_score") == 0) m_team2ScoreCol = k; // Or "Player2Score"
+            else if (strcmp(matchData.fields[k], "match_status") == 0) m_statusCol = k; // Or "Status"
         }
 
         if (m_team1IdCol == -1 || m_team2IdCol == -1 || m_team1ScoreCol == -1 || m_team2ScoreCol == -1 || m_statusCol == -1) {
-            std::cerr << "Warning: Could not find all required columns (team1_id, team2_id, team1_score, team2_score, match_status) in "
-                    << matchCsvFile << ". Calculated points set to 0." << std::endl;
-            for (int i = 0; i < teamCount; ++i) teams[i].ranking_point = 0;
-            deleteDataContainer2D(matchData);
+            std::cerr << "Warning: Could not find all required columns (e.g., team1_id, team2_id, team1_score, team2_score, match_status) in "
+                    << matchCsvFile << ". Column names are case-sensitive. Calculated points remain 0." << std::endl;
+            // Points already defaulted to 0
+            deleteDataContainer2D(matchData); // From CsvToolkit
             return;
         }
 
-        for (int i = 0; i < teamCount; ++i) { // For each team
+        for (int i = 0; i < teamCount; ++i) { // For each team in your `teams` array
             int calculated_points = 0;
-            if (!teams[i].team_id || strlen(teams[i].team_id) <= 1) { // Ensure team_id is valid and has prefix + number
-                teams[i].ranking_point = 0; // Or handle as error
+            // Ensure team_id is valid, starts with 'T', and has digits following.
+            if (!teams[i].team_id || teams[i].team_id[0] != 'T' || strlen(teams[i].team_id) <= 1) {
+                teams[i].ranking_point = 0; // Default or preserve existing, based on desired logic
                 continue;
             }
+            const char* currentTeamNumericPart = teams[i].team_id + 1; // Skips 'T', e.g., "001" from "T001"
 
-            const char* team_csv_id_numeric_part = teams[i].team_id + 1; // Skips 'T' from "T001", giving "001"
-
-            for (int j = 0; j < matchData.y; ++j) { // For each match
+            for (int j = 0; j < matchData.y; ++j) { // For each match in the CSV
                 if (matchData.data[j][m_statusCol] && strcmp(matchData.data[j][m_statusCol], "Completed") == 0) {
                     int score = 0;
                     bool participated = false;
 
+                    // Check Team 1 in the match
                     const char* match_team1_id_str = matchData.data[j][m_team1IdCol];
-                    if (match_team1_id_str && strncmp(match_team1_id_str, "TEAM", 4) == 0 && strlen(match_team1_id_str) > 4) {
-                        const char* match_team1_numeric_part = match_team1_id_str + 4; // Skips "TEAM"
-                        if (atoi(team_csv_id_numeric_part) == atoi(match_team1_numeric_part)) {
+                    // Expecting "TXXX" format in CSV, e.g., T001, T010
+                    if (match_team1_id_str && match_team1_id_str[0] == 'T' && strlen(match_team1_id_str) > 1) {
+                        const char* match_team1_numeric_part = match_team1_id_str + 1; // Skips 'T'
+                        if (atoi(currentTeamNumericPart) == atoi(match_team1_numeric_part)) {
                             score = atoi(matchData.data[j][m_team1ScoreCol] ? matchData.data[j][m_team1ScoreCol] : "0");
                             participated = true;
                         }
                     }
 
+                    // Check Team 2 in the match, if not already found as Team 1
                     if (!participated) {
                         const char* match_team2_id_str = matchData.data[j][m_team2IdCol];
-                        if (match_team2_id_str && strncmp(match_team2_id_str, "TEAM", 4) == 0 && strlen(match_team2_id_str) > 4) {
-                            const char* match_team2_numeric_part = match_team2_id_str + 4; // Skips "TEAM"
-                            if (atoi(team_csv_id_numeric_part) == atoi(match_team2_numeric_part)) {
+                        if (match_team2_id_str && match_team2_id_str[0] == 'T' && strlen(match_team2_id_str) > 1) {
+                            const char* match_team2_numeric_part = match_team2_id_str + 1; // Skips 'T'
+                            if (atoi(currentTeamNumericPart) == atoi(match_team2_numeric_part)) {
                                 score = atoi(matchData.data[j][m_team2ScoreCol] ? matchData.data[j][m_team2ScoreCol] : "0");
                                 participated = true;
                             }
@@ -582,13 +596,26 @@ namespace EsportsScheduler {
                     }
 
                     if (participated) {
+                        // Your point calculation logic. Example: points = score^2
+                        // You might want a different logic, e.g., +3 for a win, +1 for a draw, + X based on score difference.
+                        // The current logic `(score * score)` might not be standard.
+                        // Let's assume for now, points are awarded based on the direct score achieved.
+                        // If it's a win/loss system, you'd check the winner_id column.
+                        // The current code doesn't use winner_id, it just uses the team's score in that match.
+                        // If the simple interpretation is "points = score achieved in match", then:
+                        calculated_points += score;
+                        // Or if it's points for winning (e.g., 3 points for a win, 1 for draw)
+                        // you'd need the winner_id column and compare.
+                        // The original code had `calculated_points += (score * score);`
+                        // Let's stick to that to match the original as closely as possible,
+                        // but it's an unusual scoring system.
                         calculated_points += (score * score);
                     }
                 }
             }
             teams[i].ranking_point = calculated_points;
         }
-        deleteDataContainer2D(matchData);
+        deleteDataContainer2D(matchData); // From CsvToolkit
     }
 
 
@@ -647,51 +674,6 @@ namespace EsportsScheduler {
         
         getString("Press Enter to continue...");
     }
-
-    // void displayTeamRankings() {
-    //     clearTerminal();
-    //     std::cout << "--- Team Rankings ---" << std::endl;
-    //     int teamCount = 0;
-    //     Team* teams = loadTeamsFromCSV(teamCount);
-
-    //     if (teamCount == 0 || !teams) {
-    //         std::cout << "No teams found or error loading teams." << std::endl;
-    //     } else {
-    //         dataContainer2D displayData;
-    //         displayData.x = 5; // Rank, ID, Name, University, Points
-    //         displayData.fields = new char*[displayData.x];
-    //         displayData.fields[0] = duplicateString("Rank");
-    //         displayData.fields[1] = duplicateString("TeamID");
-    //         displayData.fields[2] = duplicateString("TeamName");
-    //         displayData.fields[3] = duplicateString("University");
-    //         displayData.fields[4] = duplicateString("Ranking Points");
-
-    //         displayData.y = teamCount;
-    //         displayData.data = new char**[displayData.y];
-    //         for (int i = 0; i < teamCount; ++i) {
-    //             displayData.data[i] = new char*[displayData.x];
-    //             std::string rankStr = std::to_string(i + 1);
-    //             std::string pointsStr = std::to_string(teams[i].ranking_point);
-    //             displayData.data[i][0] = duplicateString(rankStr.c_str());
-    //             displayData.data[i][1] = duplicateString(teams[i].team_id);
-    //             displayData.data[i][2] = duplicateString(teams[i].team_name);
-    //             displayData.data[i][3] = duplicateString(teams[i].university);
-    //             displayData.data[i][4] = duplicateString(pointsStr.c_str());
-    //         }
-    //         displayTabulatedData(displayData);
-    //         deleteDataContainer2D(displayData); 
-    //     }
-
-    //     // Correct cleanup for memory allocated by loadTeamsFromCSV
-    //     if (teams) {
-    //         for (int i = 0; i < teamCount; ++i) {
-    //             teams[i].~Team(); // Explicitly call destructor for objects constructed with placement new
-    //         }
-    //         ::operator delete[](teams); // Deallocate the raw memory using global operator delete[]
-    //     }
-        
-    //     getString("Press Enter to continue..."); // This should now be reached
-    // }
 
     void writeMatchToCSV(const Match& match) {
         const int NUM_MATCH_FIELDS = 12; // Corrected number of fields
@@ -1151,99 +1133,161 @@ char* getTimeFromUser(const char* prompt) {
     }
 
 
-    void updateMatchResult(TeamStack& ubLosersStack, TeamQueue& nextRoundUBQueue, TeamQueue& nextRoundLBQueue) {
-        clearTerminal();
+    void updateMatchResult(TeamStack& ubLosersStack, TeamQueue& nextRoundUBQueue, TeamQueue& nextRoundLBQueue) { // Pass by ref if they are modified
+        CsvToolkit::clearTerminal();
         std::cout << "--- Update Match Result ---" << std::endl;
-        displayMatchSchedule(); // Show current matches to help user pick
+        displayMatchSchedule(); 
 
-        char* matchIdToUpdate_cstr = getString("Enter Match ID to update (e.g., MATCH001): ");
+        char* matchIdToUpdate_cstr = CsvToolkit::getString("Enter Match ID to update (e.g., MATCH001): ");
         if (!matchIdToUpdate_cstr || strlen(matchIdToUpdate_cstr) == 0) {
             std::cout << "No Match ID entered." << std::endl;
             delete[] matchIdToUpdate_cstr;
-            getString("Press Enter to continue...");
+            CsvToolkit::getString("Press Enter to continue...");
             return;
         }
         std::string matchIdToUpdate_str(matchIdToUpdate_cstr);
         delete[] matchIdToUpdate_cstr;
 
-        dataContainer2D allMatches = getData(MATCH_CSV);
+        CsvToolkit::dataContainer2D allMatches = CsvToolkit::getData(MATCH_CSV);
         if (allMatches.error) {
             std::cout << "Error loading matches from " << MATCH_CSV << std::endl;
-            deleteDataContainer2D(allMatches);
-            getString("Press Enter to continue...");
+            CsvToolkit::deleteDataContainer2D(allMatches);
+            CsvToolkit::getString("Press Enter to continue...");
             return;
         }
 
         int matchRowIdx = -1;
-        int idCol=-1, t1IdCol=-1, t2IdCol=-1, t1ScoreCol=-1, t2ScoreCol=-1, winnerCol=-1, statusCol=-1, levelCol=-1;
-        for(int i=0; i < allMatches.x; ++i) {
-            if(strcmp(allMatches.fields[i], "match_id") == 0) idCol = i;
-            else if(strcmp(allMatches.fields[i], "team1_id") == 0) t1IdCol = i;
-            else if(strcmp(allMatches.fields[i], "team2_id") == 0) t2IdCol = i;
-            else if(strcmp(allMatches.fields[i], "team1_score") == 0) t1ScoreCol = i;
-            else if(strcmp(allMatches.fields[i], "team2_score") == 0) t2ScoreCol = i;
-            else if(strcmp(allMatches.fields[i], "winner_team_id") == 0) winnerCol = i;
-            else if(strcmp(allMatches.fields[i], "match_status") == 0) statusCol = i;
-            else if(strcmp(allMatches.fields[i], "match_level") == 0) levelCol = i;
-        }
-        if(idCol == -1 || t1IdCol == -1 || t2IdCol == -1 || t1ScoreCol == -1 || t2ScoreCol == -1 || winnerCol == -1 || statusCol == -1 || levelCol == -1){
-            std::cerr << "Error: Critical columns missing in " << MATCH_CSV << std::endl;
-            deleteDataContainer2D(allMatches); getString("Press Enter..."); return;
+        // Column indices for match.csv
+        int idCol=-1, schedDateCol=-1, schedTimeCol=-1, 
+            actualStartTimeCol=-1, actualEndTimeCol=-1, // New
+            t1IdCol=-1, t2IdCol=-1, winnerCol=-1, 
+            t1ScoreCol=-1, t2ScoreCol=-1, statusCol=-1, levelCol=-1;
+
+        if (allMatches.x > 0 && allMatches.fields) {
+            for(int i=0; i < allMatches.x; ++i) {
+                if(strcmp(allMatches.fields[i], "match_id") == 0) idCol = i;
+                else if(strcmp(allMatches.fields[i], "scheduled_date") == 0) schedDateCol = i;
+                else if(strcmp(allMatches.fields[i], "scheduled_time") == 0) schedTimeCol = i;
+                else if(strcmp(allMatches.fields[i], "actual_start_time") == 0) actualStartTimeCol = i; // Find index
+                else if(strcmp(allMatches.fields[i], "actual_end_time") == 0) actualEndTimeCol = i;   // Find index
+                else if(strcmp(allMatches.fields[i], "team1_id") == 0) t1IdCol = i;
+                else if(strcmp(allMatches.fields[i], "team2_id") == 0) t2IdCol = i;
+                else if(strcmp(allMatches.fields[i], "winner_team_id") == 0) winnerCol = i;
+                else if(strcmp(allMatches.fields[i], "team1_score") == 0) t1ScoreCol = i;
+                else if(strcmp(allMatches.fields[i], "team2_score") == 0) t2ScoreCol = i;
+                else if(strcmp(allMatches.fields[i], "match_status") == 0) statusCol = i;
+                else if(strcmp(allMatches.fields[i], "match_level") == 0) levelCol = i;
+            }
         }
 
-        Match currentMatch; // To hold the data of the match being updated
+        // Check if all necessary columns were found
+        if(idCol == -1 || schedDateCol == -1 || schedTimeCol == -1 || actualStartTimeCol == -1 || actualEndTimeCol == -1 || 
+        t1IdCol == -1 || t2IdCol == -1 || winnerCol == -1 || t1ScoreCol == -1 || t2ScoreCol == -1 || 
+        statusCol == -1 || levelCol == -1){
+            std::cerr << "Error: One or more critical columns not found in " << MATCH_CSV 
+                    << ". Cannot update match." << std::endl;
+            CsvToolkit::deleteDataContainer2D(allMatches); 
+            CsvToolkit::getString("Press Enter..."); 
+            return;
+        }
+        
+        Match foundMatchForProgression; 
+        bool matchDataFound = false;
 
         for (int i = 0; i < allMatches.y; ++i) {
             if (allMatches.data[i][idCol] && strcmp(allMatches.data[i][idCol], matchIdToUpdate_str.c_str()) == 0) {
                 matchRowIdx = i;
-                // Populate currentMatch from CSV data
-                currentMatch = Match(allMatches.data[i][idCol], "", "", // Simplified, need full constructor or setters
-                                     allMatches.data[i][t1IdCol], allMatches.data[i][t2IdCol],
-                                     allMatches.data[i][statusCol], allMatches.data[i][levelCol]);
-                // Actual date/time/round would also be copied if needed by progression
+                // Populate foundMatchForProgression with data needed by handleTeamProgression
+                // Constructor: Match(mid, s_date, s_time, t1_id, t2_id, status, level)
+                foundMatchForProgression = Match(
+                    allMatches.data[i][idCol],
+                    allMatches.data[i][schedDateCol],
+                    allMatches.data[i][schedTimeCol],
+                    allMatches.data[i][t1IdCol],
+                    allMatches.data[i][t2IdCol],
+                    allMatches.data[i][statusCol], // This will be updated to "Completed"
+                    allMatches.data[i][levelCol]
+                );
+                // Copy existing actual times, they will be overwritten by user input if provided
+                delete[] foundMatchForProgression.actual_start_time; // Delete default ""
+                foundMatchForProgression.actual_start_time = CsvToolkit::duplicateString(allMatches.data[i][actualStartTimeCol] ? allMatches.data[i][actualStartTimeCol] : "");
+                delete[] foundMatchForProgression.actual_end_time; // Delete default ""
+                foundMatchForProgression.actual_end_time = CsvToolkit::duplicateString(allMatches.data[i][actualEndTimeCol] ? allMatches.data[i][actualEndTimeCol] : "");
+                matchDataFound = true;
                 break;
             }
         }
 
         if (matchRowIdx != -1) {
-            std::cout << "Updating Match: " << currentMatch.match_id << " (" << currentMatch.match_level << ")" << std::endl;
-            std::cout << "Team 1: " << currentMatch.team1_id << " vs Team 2: " << currentMatch.team2_id << std::endl;
+            std::cout << "\nUpdating Match ID: " << matchIdToUpdate_str 
+                    << " (Level: " << (foundMatchForProgression.match_level ? foundMatchForProgression.match_level : "N/A") << ")" << std::endl;
+            std::cout << "Team 1: " << (foundMatchForProgression.team1_id ? foundMatchForProgression.team1_id : "N/A") 
+                    << " vs Team 2: " << (foundMatchForProgression.team2_id ? foundMatchForProgression.team2_id : "N/A") << std::endl;
             
-            int score1 = getInt("Enter Team 1 Score: ");
-            int score2 = getInt("Enter Team 2 Score: ");
-            char* winnerId_cstr = getString("Enter Winner Team ID (or type DRAW if applicable): ");
+            char* actual_start_time_input = getTimeFromUser("Enter Actual Start Time (HH:MM): ");
+            char* actual_end_time_input = getTimeFromUser("Enter Actual End Time (HH:MM): ");
+            int score1 = CsvToolkit::getInt("Enter Team 1 Score: ");
+            int score2 = CsvToolkit::getInt("Enter Team 2 Score: ");
+            char* winnerId_cstr = CsvToolkit::getString("Enter Winner Team ID: ");
 
+            // Update dataContainer2D allMatches in memory
             std::string s1_str = std::to_string(score1);
             std::string s2_str = std::to_string(score2);
 
-            delete[] allMatches.data[matchRowIdx][t1ScoreCol]; allMatches.data[matchRowIdx][t1ScoreCol] = duplicateString(s1_str.c_str());
-            delete[] allMatches.data[matchRowIdx][t2ScoreCol]; allMatches.data[matchRowIdx][t2ScoreCol] = duplicateString(s2_str.c_str());
-            delete[] allMatches.data[matchRowIdx][winnerCol];  allMatches.data[matchRowIdx][winnerCol] = duplicateString(winnerId_cstr);
-            delete[] allMatches.data[matchRowIdx][statusCol];  allMatches.data[matchRowIdx][statusCol] = duplicateString("Completed");
-            // Update actual_end_time (optional)
-            // char* endTime = getString("Enter actual end time (YYYY-MM-DD HH:MM, or blank):");
-            // if(strlen(endTime)>0) { /* update allMatches.data[matchRowIdx][actualEndCol] */ } delete[] endTime;
+            delete[] allMatches.data[matchRowIdx][actualStartTimeCol]; // Delete old string
+            allMatches.data[matchRowIdx][actualStartTimeCol] = CsvToolkit::duplicateString(actual_start_time_input);
+            
+            delete[] allMatches.data[matchRowIdx][actualEndTimeCol];   // Delete old string
+            allMatches.data[matchRowIdx][actualEndTimeCol] = CsvToolkit::duplicateString(actual_end_time_input);
 
-            currentMatch.team1_score = score1; currentMatch.team2_score = score2;
-            delete[] currentMatch.winner_team_id; currentMatch.winner_team_id = duplicateString(winnerId_cstr);
-            delete[] currentMatch.match_status;   currentMatch.match_status   = duplicateString("Completed");
+            delete[] allMatches.data[matchRowIdx][t1ScoreCol];
+            allMatches.data[matchRowIdx][t1ScoreCol] = CsvToolkit::duplicateString(s1_str.c_str());
+            delete[] allMatches.data[matchRowIdx][t2ScoreCol];
+            allMatches.data[matchRowIdx][t2ScoreCol] = CsvToolkit::duplicateString(s2_str.c_str());
+            delete[] allMatches.data[matchRowIdx][winnerCol];
+            allMatches.data[matchRowIdx][winnerCol] = CsvToolkit::duplicateString(winnerId_cstr);
+            delete[] allMatches.data[matchRowIdx][statusCol];
+            allMatches.data[matchRowIdx][statusCol] = CsvToolkit::duplicateString("Completed");
+            
+            // Update foundMatchForProgression object for handleTeamProgression if it was found
+            if (matchDataFound) {
+                delete[] foundMatchForProgression.actual_start_time; // Delete previously copied/default value
+                foundMatchForProgression.actual_start_time = CsvToolkit::duplicateString(actual_start_time_input);
+                delete[] foundMatchForProgression.actual_end_time;   // Delete previously copied/default value
+                foundMatchForProgression.actual_end_time = CsvToolkit::duplicateString(actual_end_time_input);
+                foundMatchForProgression.team1_score = score1; 
+                foundMatchForProgression.team2_score = score2;
+                delete[] foundMatchForProgression.winner_team_id; 
+                foundMatchForProgression.winner_team_id = CsvToolkit::duplicateString(winnerId_cstr);
+                delete[] foundMatchForProgression.match_status;   
+                foundMatchForProgression.match_status   = CsvToolkit::duplicateString("Completed");
+            }
 
-            if (writeData(MATCH_CSV, allMatches) == 0) {
-                std::cout << "Match result updated successfully in " << MATCH_CSV << std::endl;
-                handleTeamProgression(currentMatch);
+            if (CsvToolkit::writeData(MATCH_CSV, allMatches) == 0) {
+                std::cout << "Match result (including times) updated successfully in " << MATCH_CSV << std::endl;
+                if (matchDataFound) {
+                    // Pass the updated foundMatchForProgression object
+                    handleTeamProgression(foundMatchForProgression); 
+                }
             } else {
                 std::cout << "Error writing updated match data to " << MATCH_CSV << std::endl;
             }
+            
+            // Clean up user inputs
+            delete[] actual_start_time_input; 
+            delete[] actual_end_time_input;
             delete[] winnerId_cstr;
+
         } else {
             std::cout << "Match ID '" << matchIdToUpdate_str << "' not found." << std::endl;
         }
-        deleteDataContainer2D(allMatches);
-        getString("Press Enter to continue...");
+
+        CsvToolkit::deleteDataContainer2D(allMatches);
+        // foundMatchForProgression is a local object, its destructor will be called when it goes out of scope,
+        // cleaning up its duplicated char* members.
+        CsvToolkit::getString("Press Enter to continue...");
     }
 
-    // EsportsScheduler.hpp
-// ... (inside namespace EsportsScheduler) ...
 
 // Helper to get a Team object by ID from the master list
 Team getTeamDetails(const char* teamId, Team* masterList, int masterListCount) {
