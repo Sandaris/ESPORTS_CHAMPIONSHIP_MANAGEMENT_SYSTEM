@@ -4,7 +4,7 @@ using namespace std;
 using namespace CsvToolkit;
 const std::string Teams_CSV_FILE = "teams.csv";
 const std::string Players_CSV_FILE = "player.csv";
-void menu();
+void RegistrationPlayerManagement();
 
 char** TeamRegistration() {
     using namespace CsvToolkit;
@@ -194,13 +194,13 @@ void WholeRegistration() {
             
             displaySystemMessage("Team successfully registered.", 2);
             clearTerminal();
-            menu();
+            RegistrationPlayerManagement();
     }
     else{
         CsvToolkit::clearTerminal();
         CsvToolkit::displaySystemMessage("Registration canceled.", 2);
         clearTerminal();
-        menu();
+        RegistrationPlayerManagement();
     }
 }
 
@@ -221,7 +221,7 @@ void ViewPriorityList(){
 
     cout << "---------------------------------\n";
     cout << "Press any key to continue..."; cin.ignore();
-    menu();
+    RegistrationPlayerManagement();
 
 }
 
@@ -329,17 +329,17 @@ void Withdrawal() {
         }
         PromoteWaitingTeams();
         displaySystemMessage("Team and players withdrawn successfully.", 2);
-        menu();    
+        RegistrationPlayerManagement();    
     } else {
         displaySystemMessage("Withdrawal cancelled.", 2);
-        menu();
+        RegistrationPlayerManagement();
     
     }
 
     std::cout << "Press Enter to return to menu...";
     std::cin.ignore();
     std::cin.get();
-    menu();
+    RegistrationPlayerManagement();
 }
 
 void TeamCheckIn() {
@@ -440,7 +440,7 @@ void TeamCheckIn() {
     std::cout << "Press Enter to return to menu..."; 
     std::cin.ignore(); 
     std::cin.get();
-    menu();
+    RegistrationPlayerManagement();
 }
 
 void ViewEligibleTeam() {
@@ -512,10 +512,10 @@ void ViewEligibleTeam() {
     std::cout << "Press Enter to return to menu...";
     std::cin.ignore(); 
     std::cin.get();
-    menu();
+    RegistrationPlayerManagement();
 }
 
-void menu(){
+void RegistrationPlayerManagement(){
     using namespace CsvToolkit;
     CsvToolkit::clearTerminal();
     std::cout << "\n--- Menu ---\n";
@@ -538,8 +538,4 @@ void menu(){
     }
 }
 
-int main(){
-    menu();
-    return 0;
-}
 
