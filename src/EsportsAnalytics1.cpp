@@ -2,24 +2,24 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <cstring>    // for std::strcmp
+#include <cstring>    
 
 namespace EsportsAnalytics {
 
     // globals for storing all match outcomes in memory
     // allMatches[i] holds the i-th match read from match.csv
     MatchOutcome allMatches[MAX_TOTAL_MATCHES];
-    int           totalMatchesLoaded = 0;
+    int totalMatchesLoaded = 0;
 
     // stack (lifo) for recently logged matches
     // loggedStack[0] is the most recent, stackTopIndex tracks count
     MatchOutcome loggedStack[MAX_LOG_STACK];
-    int           stackTopIndex     = 0;
+    int stackTopIndex = 0;
 
     // globals for storing all game stats in memory
     // allGameStats[i] holds the i-th row from player_match_stats.csv
     GameStat allGameStats[MAX_TOTAL_STATS];
-    int      totalGameStatsLoaded = 0;
+    int totalGameStatsLoaded = 0;
 
     // a single global to allow calling recentMatchOutcomes.display()
     RecentMatches recentMatchOutcomes;

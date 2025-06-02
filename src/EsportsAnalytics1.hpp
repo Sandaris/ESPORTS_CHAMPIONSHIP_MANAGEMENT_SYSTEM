@@ -9,34 +9,21 @@ using namespace CsvToolkit;
 
 namespace EsportsAnalytics {
 
-    // helper: deep-copy a null-terminated c-string
-    // inline char* duplicateString(const char* src) {
-    //     if (!src) return nullptr;
-    //     size_t len = std::strlen(src);
-    //     char* dst = new char[len + 1];
-    //     std::strcpy(dst, src);
-    //     return dst;
-    // }
 
     // struct to hold one line from match.csv
-    // fields correspond to each column:
-    //   match_id, scheduled_date, scheduled_time,
-    //   actual_start_time, actual_end_time,
-    //   team1_id, team2_id, winner_team_id,
-    //   team1_score, team2_score, match_status, match_level
     struct MatchOutcome {
-        char* match_id;           // unique id for this match
-        char* scheduled_date;     // date when match was scheduled
-        char* scheduled_time;     // time when match was scheduled
-        char* actual_start_time;  // time match actually started
-        char* actual_end_time;    // time match ended
-        char* team1_id;           // identifier for team1
-        char* team2_id;           // identifier for team2
-        char* winner_team_id;     // id of the winning team
-        int   team1_score;        // score of team1
-        int   team2_score;        // score of team2
-        char* match_status;       // e.g. "Completed", "Cancelled"
-        char* match_level;        // e.g. "Group Stage", "Quarterfinal"
+        char* match_id;          
+        char* scheduled_date;     
+        char* scheduled_time;     
+        char* actual_start_time; 
+        char* actual_end_time;    
+        char* team1_id;           
+        char* team2_id;           
+        char* winner_team_id;    
+        int   team1_score;        
+        int   team2_score;       
+        char* match_status;       
+        char* match_level;        
 
         // default constructor: initialize pointers to nullptr, ints to zero
         MatchOutcome()
@@ -147,14 +134,14 @@ namespace EsportsAnalytics {
     // fields correspond to columns:
     //   match_id, in-game-name, hero_played, kills, deaths, assists, gpm, xpm
     struct GameStat {
-        char* match_id;     // id of the match this stat belongs to
-        char* InGameName;   // player's identifier (nickname)
-        char* hero_played;  // name of hero or character used
-        int   kills;        // number of kills in this match
-        int   deaths;       // number of deaths in this match
-        int   assists;      // number of assists in this match
-        int   gpm;          // gold-per-minute stat
-        int   xpm;          // xp-per-minute stat
+        char* match_id;     
+        char* InGameName;   
+        char* hero_played;  
+        int   kills;       
+        int   deaths;       
+        int   assists;      
+        int   gpm;       
+        int   xpm;          
 
         // default constructor: pointers to nullptr, ints to zero
         GameStat()
@@ -227,21 +214,21 @@ namespace EsportsAnalytics {
 
 
     // maximum sizes for our in-memory arrays
-    const int MAX_TOTAL_MATCHES = 2000;     // max rows in match.csv
-    const int MAX_LOG_STACK     = 2000;     // max “recent matches” to store
-    static const int MAX_TOTAL_STATS = 10000; // max rows in player_match_stats.csv
+    const int MAX_TOTAL_MATCHES = 2000;     
+    const int MAX_LOG_STACK     = 2000;     
+    static const int MAX_TOTAL_STATS = 10000; 
 
     // arrays and counters for match outcomes
     extern MatchOutcome allMatches[MAX_TOTAL_MATCHES];
-    extern int           totalMatchesLoaded;
+    extern int totalMatchesLoaded;
 
     // stack (lifo) for recent matches
     extern MatchOutcome loggedStack[MAX_LOG_STACK];
-    extern int           stackTopIndex;
+    extern int stackTopIndex;
 
     // array and counter for game stats
     extern GameStat allGameStats[MAX_TOTAL_STATS];
-    extern int      totalGameStatsLoaded;
+    extern int totalGameStatsLoaded;
 
     // load match.csv into allMatches[], return number of rows read
     int  loadAllMatchOutcomes(const char* filename);
