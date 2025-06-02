@@ -1,18 +1,18 @@
 #ifndef CSV_TOOLKIT_HPP
 #define CSV_TOOLKIT_HPP
 
-#include <iostream>      // For std::cout, std::cerr, std::cin
-#include <fstream>       // For std::ifstream, std::ofstream, std::fstream
-#include <string>        // For std::string
-#include <cstring>       // For strcpy, strlen, strcmp, etc. (C-style string functions)
-#include <cstdlib>       // For std::atoi, std::atof
-#include <cmath>         // For std::floor, other math functions
-#include <cctype>        // For std::isdigit, std::tolower
-#include <filesystem>    // For path manipulation (C++17)
-#include <limits>        // For std::numeric_limits
-#include <chrono>        // For std::chrono (sleep)
-#include <thread>        // For std::this_thread (sleep)
-#include <sstream>       // For std::ostringstream
+#include <iostream>      
+#include <fstream>       
+#include <string>        
+#include <cstring>      
+#include <cstdlib>       
+#include <cmath>         
+#include <cctype>       
+#include <filesystem>   
+#include <limits>        
+#include <chrono>        
+#include <thread>        
+#include <sstream>       
 
 // Define a namespace alias for std::filesystem
 namespace fs = std::filesystem;
@@ -451,30 +451,30 @@ char* duplicateString(const char* cstr) {
 }
 
     // --- Helper to ensure CSV headers exist ---
-    void ensureCsvHeader(const std::string& filename, const char* headers[], int numFields) {
-        fs::path dataDir;
-        try { // Simplified path logic for brevity, ensure your openCsvFileForWrite handles this robustly
-            fs::path currentPath = fs::current_path();
-            if (currentPath.has_parent_path()) dataDir = currentPath.parent_path() / "data"; else dataDir = currentPath / "data";
-             if (!fs::exists(dataDir) && currentPath.has_parent_path() && currentPath.parent_path().has_parent_path()){
-                 dataDir = currentPath.parent_path().parent_path() / "data";
-            }
-             if (!fs::exists(dataDir)) dataDir = fs::current_path() / "data"; // Final fallback
-        } catch (...) { dataDir = "data"; }
-
-
-        fs::path filePath = dataDir / filename;
-        std::ifstream fileCheck(filePath.string());
-        bool fileExistsAndNotEmpty = fileCheck.good() && fileCheck.peek() != EOF;
-        fileCheck.close();
-
-        if (!fileExistsAndNotEmpty) {
-            std::cout << "Info: CSV file '" << filename << "' not found or empty. Writing headers." << std::endl;
-            // Use writeNewDataRow to write the header
-            // This function itself will use openCsvFileForWrite which handles directory creation
-            writeNewDataRow(filename, numFields, headers);
+void ensureCsvHeader(const std::string& filename, const char* headers[], int numFields) {
+    fs::path dataDir;
+    try { // Simplified path logic for brevity, ensure your openCsvFileForWrite handles this robustly
+        fs::path currentPath = fs::current_path();
+        if (currentPath.has_parent_path()) dataDir = currentPath.parent_path() / "data"; else dataDir = currentPath / "data";
+            if (!fs::exists(dataDir) && currentPath.has_parent_path() && currentPath.parent_path().has_parent_path()){
+                dataDir = currentPath.parent_path().parent_path() / "data";
         }
+            if (!fs::exists(dataDir)) dataDir = fs::current_path() / "data"; // Final fallback
+    } catch (...) { dataDir = "data"; }
+
+
+    fs::path filePath = dataDir / filename;
+    std::ifstream fileCheck(filePath.string());
+    bool fileExistsAndNotEmpty = fileCheck.good() && fileCheck.peek() != EOF;
+    fileCheck.close();
+
+    if (!fileExistsAndNotEmpty) {
+        std::cout << "Info: CSV file '" << filename << "' not found or empty. Writing headers." << std::endl;
+        // Use writeNewDataRow to write the header
+        // This function itself will use openCsvFileForWrite which handles directory creation
+        writeNewDataRow(filename, numFields, headers);
     }
+}
 
 
 dataContainer2D concatDataContainer(const dataContainer2D& data1, const dataContainer2D& data2, const char* keyField1, const char* keyField2) {

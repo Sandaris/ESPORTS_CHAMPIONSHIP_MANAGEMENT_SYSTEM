@@ -119,3 +119,103 @@ MATCH012,DanaShock,Wind Dancer,9,8,11,610,650
 MATCH012,ErinRush,Magma Lord,2,11,13,390,480
 MATCH012,FelixDash,Tidal Mystic,5,9,16,470,530
 MATCH012,GinaFrost,Spirit Walker,1,12,19,360,470
+MATCH013,CarlVolt,Spirit Walker,15,9,12,489,675
+MATCH013,DanaShock,Dune Strider,4,5,21,679,695
+MATCH013,ErinRush,Abyssal Fiend,19,13,18,833,715
+MATCH013,FelixDash,Anti-Mage,20,12,3,433,719
+MATCH013,GinaFrost,Dragon Knight,0,5,16,764,358
+MATCH013,SamVoid,Aegis Knight,9,5,23,782,355
+MATCH013,TinaBlink,Night Stalker,0,5,3,306,855
+MATCH013,UmarX,Tidal Mystic,0,14,23,393,403
+MATCH013,VeraDash,Crystal Maiden,15,7,2,796,591
+MATCH013,WillZap,Stone Breaker,0,10,12,577,806
+MATCH014,QinNova,Iron Golem,0,4,18,561,801
+MATCH014,RaeLight,Stone Breaker,13,6,7,414,581
+MATCH014,SethBurn,Grove Warden,14,1,11,801,566
+MATCH014,ToriZap,Void Ranger,9,15,19,363,432
+MATCH014,UmaDash,Chronomancer,4,12,18,791,311
+MATCH014,Alice01,Sky Templar,17,3,9,367,833
+MATCH014,Bobster,Sky Templar,8,7,7,634,683
+MATCH014,CathyZ,Aegis Knight,14,8,0,339,612
+MATCH014,D4v1d,Wind Dancer,13,5,8,673,509
+MATCH014,EddyG,Phantom Lancer,6,11,18,796,649
+MATCH015,OmarCrit,Sky Templar,0,3,21,343,352
+MATCH015,PiaVoid,Iron Golem,16,11,11,346,332
+MATCH015,QinBlink,Abyssal Fiend,20,9,7,623,890
+MATCH015,RaviBolt,Blood Witch,7,4,0,738,344
+MATCH015,SukiFlare,Invoker,19,1,15,342,425
+MATCH015,ElioStar,Invoker,0,0,21,532,560
+MATCH015,FayeMancer,Grove Warden,19,7,23,353,476
+MATCH015,GavinRush,Storm Zealot,11,11,15,510,671
+MATCH015,HazelBlink,Aegis Knight,15,2,15,281,772
+MATCH015,IrisPath,Blood Witch,16,6,5,613,675
+MATCH016,KaiDark,Abyssal Fiend,17,2,24,365,319
+MATCH016,LilyShock,Invoker,19,0,12,280,813
+MATCH016,MoeStatic,Stone Breaker,3,12,6,395,719
+MATCH016,NinaCore,Wind Dancer,4,0,16,311,349
+MATCH016,OmarStrike,Invoker,16,2,23,365,547
+MATCH016,MiraWind,Dune Strider,13,5,13,460,760
+MATCH016,NoahRay,Sky Templar,19,6,13,505,553
+MATCH016,OllieDawn,Star Fencer,6,2,16,486,423
+MATCH016,PiaStorm,Invoker,0,0,20,428,475
+MATCH016,QuinnIce,Night Stalker,19,4,1,601,879
+MATCH017,SamVoid,Sky Templar,15,13,18,567,587
+MATCH017,TinaBlink,Abyssal Fiend,3,6,2,635,423
+MATCH017,UmarX,Star Fencer,14,12,22,446,308
+MATCH017,VeraDash,Night Stalker,12,8,18,611,773
+MATCH017,WillZap,Invoker,1,4,2,280,305
+MATCH017,Alice01,Star Fencer,3,11,19,691,723
+MATCH017,Bobster,Aegis Knight,11,8,10,810,387
+MATCH017,CathyZ,Storm Zealot,7,0,9,786,702
+MATCH017,D4v1d,Night Stalker,9,14,17,676,465
+MATCH017,EddyG,Chronomancer,14,2,19,699,388
+MATCH018,CarlVolt,Dragon Knight,4,12,9,356,576
+MATCH018,DanaShock,Frost Lich,20,2,7,746,551
+MATCH018,ErinRush,Phantom Lancer,17,4,11,758,304
+MATCH018,FelixDash,Star Fencer,13,2,12,674,371
+MATCH018,GinaFrost,Shadow Weaver,16,2,6,715,457
+MATCH018,MiraWind,Abyssal Fiend,10,4,24,520,404
+MATCH018,NoahRay,Storm Zealot,1,4,17,695,591
+MATCH018,OllieDawn,Abyssal Fiend,15,4,23,836,478
+MATCH018,PiaStorm,Grove Warden,3,9,17,512,643
+MATCH018,QuinnIce,Invoker,1,3,8,588,497
+MATCH019,QinNova,Wind Dancer,11,13,3,619,529
+MATCH019,RaeLight,Storm Zealot,15,5,6,646,597
+MATCH019,SethBurn,Wind Dancer,4,4,16,359,604
+MATCH019,ToriZap,Anti-Mage,5,14,23,507,363
+MATCH019,UmaDash,Wind Dancer,16,6,20,569,698
+MATCH019,OmarCrit,Star Fencer,12,9,17,411,676
+MATCH019,PiaVoid,Invoker,3,11,10,691,653
+MATCH019,QinBlink,Frost Lich,15,9,11,448,652
+MATCH019,RaviBolt,Void Ranger,9,6,15,342,877
+MATCH019,SukiFlare,Aegis Knight,19,4,6,647,843
+MATCH020,QinNova,Aegis Knight,0,7,1,274,797
+MATCH020,RaeLight,Invoker,15,13,2,491,566
+MATCH020,SethBurn,Sky Templar,2,12,12,624,336
+MATCH020,ToriZap,Shadow Weaver,11,1,7,750,300
+MATCH020,UmaDash,Dune Strider,2,7,17,398,334
+MATCH020,MiraWind,Storm Zealot,8,4,17,793,324
+MATCH020,NoahRay,Storm Zealot,7,7,14,560,563
+MATCH020,OllieDawn,Tidal Mystic,4,13,8,506,462
+MATCH020,PiaStorm,Dragon Knight,6,0,5,763,458
+MATCH020,QuinnIce,Aegis Knight,4,0,15,575,824
+MATCH021,SamVoid,Aegis Knight,20,12,7,465,836
+MATCH021,TinaBlink,Star Fencer,17,11,25,684,388
+MATCH021,UmarX,Wind Dancer,1,7,8,757,544
+MATCH021,VeraDash,Wind Dancer,3,3,23,843,454
+MATCH021,WillZap,Stone Breaker,4,5,7,345,435
+MATCH021,MiraWind,Sun Guardian,19,0,10,438,532
+MATCH021,NoahRay,Blood Witch,16,7,2,813,536
+MATCH021,OllieDawn,Sun Guardian,5,6,22,697,517
+MATCH021,PiaStorm,Invoker,18,14,18,611,847
+MATCH021,QuinnIce,Tidal Mystic,18,5,16,286,386
+MATCH022,Alice01,Grove Warden,7,15,10,752,691
+MATCH022,Bobster,Chronomancer,5,4,16,454,327
+MATCH022,CathyZ,Iron Golem,16,8,5,638,881
+MATCH022,D4v1d,Night Stalker,7,10,2,592,518
+MATCH022,EddyG,Frost Lich,15,2,3,343,689
+MATCH022,MiraWind,Invoker,17,14,3,458,300
+MATCH022,NoahRay,Dune Strider,15,9,1,484,763
+MATCH022,OllieDawn,Tidal Mystic,8,0,4,671,824
+MATCH022,PiaStorm,Sun Guardian,13,8,12,661,331
+MATCH022,QuinnIce,Night Stalker,9,7,23,315,455

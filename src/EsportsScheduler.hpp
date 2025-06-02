@@ -824,20 +824,8 @@ namespace EsportsScheduler {
                         }
                     }
 
-                    if (participated) {
-                        // Your point calculation logic. Example: points = score^2
-                        // You might want a different logic, e.g., +3 for a win, +1 for a draw, + X based on score difference.
-                        // The current logic `(score * score)` might not be standard.
-                        // Let's assume for now, points are awarded based on the direct score achieved.
-                        // If it's a win/loss system, you'd check the winner_id column.
-                        // The current code doesn't use winner_id, it just uses the team's score in that match.
-                        // If the simple interpretation is "points = score achieved in match", then:
-                        calculated_points += score;
-                        // Or if it's points for winning (e.g., 3 points for a win, 1 for draw)
-                        // you'd need the winner_id column and compare.
-                        // The original code had `calculated_points += (score * score);`
-                        // Let's stick to that to match the original as closely as possible,
-                        // but it's an unusual scoring system.
+                    if (participated) 
+                    {
                         calculated_points += (score * score);
                     }
                 }
